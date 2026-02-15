@@ -381,6 +381,13 @@
             display: block;
         }
         
+        .message.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
+            display: block;
+        }
+        
         .empty-state {
             text-align: center;
             padding: 3rem 2rem;
@@ -455,11 +462,12 @@
         <div class="section">
             <div class="section-header">
                 <h2 class="section-title">📋 Active Service Calls</h2>
-                <button class="btn btn-primary" onclick="loadCalls()">🔄 Refresh</button>
+                <button class="btn btn-primary" onclick="loadCallsFromSheet()">🔄 Refresh</button>
             </div>
             
             <div id="successMessage" class="message success"></div>
             <div id="errorMessage" class="message error"></div>
+            <div id="infoMessage" class="message info"></div>
             
             <table class="calls-table" id="callsTable">
                 <thead>
@@ -630,19 +638,83 @@
     </div>
     
     <script>
-        // Sample data (replace with Google Sheets API integration)
+        // ============================================
+        // CONFIGURATION - YOUR WEB APP URL
+        // ============================================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
+        
+        // Sample data (will be loaded from Google Sheets)
         let serviceCalls = [];
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            loadCalls();
-            updateStats();
+            // Test API connection
+            testAPIConnection();
+            
+            // Load data from Google Sheets
+            loadCallsFromSheet();
+            updateStatsFromSheet();
             
             // Set minimum date to tomorrow
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             document.querySelector('[name="scheduledDate"]').min = tomorrow.toISOString().split('T')[0];
         });
+        
+        // Test API connection
+        function testAPIConnection() {
+            fetch(APPS_SCRIPT_URL + '?action=test')
+                .then(response => response.text())
+                .then(data => {
+                    console.log('✅ API Connected:', data);
+                })
+                .catch(error => {
+                    console.error('❌ API Connection Failed:', error);
+                });
+        }
+        
+        // Load calls from Google Sheets
+        function loadCallsFromSheet() {
+            showMessage('info', 'Loading data from server...');
+            
+            fetch(APPS_SCRIPT_URL + '?action=getActiveCalls')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        serviceCalls = data.data.calls || [];
+                        loadCalls();
+                        updateStats();
+                        showMessage('success', `Loaded ${serviceCalls.length} active calls`);
+                        setTimeout(() => {
+                            document.getElementById('successMessage').style.display = 'none';
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading calls:', error);
+                    showMessage('error', 'Error loading data. Using local cache.');
+                    loadCalls();
+                    updateStats();
+                });
+        }
+        
+        // Update stats from Google Sheets
+        function updateStatsFromSheet() {
+            fetch(APPS_SCRIPT_URL + '?action=getDashboardStats')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data.stats) {
+                        const stats = data.data.stats;
+                        document.getElementById('todayCalls').textContent = stats.todayCalls;
+                        document.getElementById('completedToday').textContent = stats.completedToday;
+                        document.getElementById('pendingCalls').textContent = stats.pendingCalls;
+                        document.getElementById('criticalCalls').textContent = stats.criticalCalls;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading stats:', error);
+                });
+        }
         
         function showNewCallModal() {
             document.getElementById('newCallModal').classList.add('active');
@@ -659,26 +731,35 @@
             const formData = new FormData(event.target);
             const callData = Object.fromEntries(formData);
             
-            // Generate Call ID
-            const callId = generateCallId();
-            callData.callId = callId;
-            callData.status = 'Assigned';
-            callData.dateLogged = new Date().toISOString().split('T')[0];
-            callData.timeLogged = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+            // Show loading message
+            showMessage('info', 'Submitting service call...');
             
-            // In production, send to Google Sheets via Apps Script
-            console.log('New Call Data:', callData);
-            
-            // Add to local array (temporary)
-            serviceCalls.push(callData);
-            
-            // Show success message
-            showMessage('success', `Service call ${callId} logged successfully!`);
-            
-            // Close modal and refresh
-            closeNewCallModal();
-            loadCalls();
-            updateStats();
+            // Send to Google Apps Script
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Apps Script
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'logServiceCall',
+                    callData: callData
+                })
+            })
+            .then(() => {
+                // Success! (note: no-cors mode doesn't give us response data)
+                showMessage('success', '✅ Service call logged successfully! Refreshing...');
+                
+                // Close modal and refresh data
+                setTimeout(() => {
+                    closeNewCallModal();
+                    loadCallsFromSheet();
+                }, 1500);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('error', '❌ Error submitting call. Please try again.');
+            });
         }
         
         function generateCallId() {
@@ -747,13 +828,16 @@
         }
         
         function showMessage(type, message) {
-            const messageDiv = document.getElementById(type === 'success' ? 'successMessage' : 'errorMessage');
+            const messageDiv = document.getElementById(type === 'success' ? 'successMessage' : type === 'error' ? 'errorMessage' : 'infoMessage');
             messageDiv.textContent = message;
             messageDiv.style.display = 'block';
             
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 5000);
+            // Auto-hide after 5 seconds (except info messages during loading)
+            if (type !== 'info') {
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
         }
         
         // Close modal when clicking outside
