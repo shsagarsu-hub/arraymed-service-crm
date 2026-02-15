@@ -3,442 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArrayMed Service CRM - Coordinator Dashboard</title>
+    <title>ArrayMed Service CRM</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #3498db;
-            --success: #2ecc71;
-            --danger: #e74c3c;
-            --warning: #f39c12;
-            --info: #9b59b6;
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-            --bg: #f8f9fa;
+            --primary: #3498db; --success: #2ecc71; --danger: #e74c3c;
+            --warning: #f39c12; --dark: #2c3e50; --light: #ecf0f1; --bg: #f8f9fa;
         }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--dark);
-        }
-        
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, #2980b9 100%);
-            color: white;
-            padding: 1.5rem 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 100;
         }
-        
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-family: 'Poppins', sans-serif; font-size: 1.75rem; font-weight: 800; }
+        .btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; display: inline-flex; gap: 0.5rem;
         }
-        
-        .header h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.75rem;
-            font-weight: 800;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(255,255,255,0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #2980b9; transform: translateY(-2px); }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
         .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            border-left: 4px solid var(--primary);
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: white; padding: 1.5rem; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid var(--primary);
         }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
-        }
-        
         .stat-card.success { border-color: var(--success); }
         .stat-card.warning { border-color: var(--warning); }
         .stat-card.danger { border-color: var(--danger); }
-        .stat-card.info { border-color: var(--info); }
-        
-        .stat-label {
-            font-size: 0.875rem;
-            color: #7f8c8d;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark);
-        }
-        
-        .section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light);
-        }
-        
-        .section-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-        
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #27ae60;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-        
-        label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--dark);
-        }
-        
-        label .required {
-            color: var(--danger);
-        }
-        
-        input, select, textarea {
-            padding: 0.75rem;
-            border: 2px solid var(--light);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
-            transition: border-color 0.2s;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-        
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        
-        .calls-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .calls-table th {
-            background: var(--bg);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--dark);
-            border-bottom: 2px solid var(--light);
-        }
-        
-        .calls-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--light);
-        }
-        
-        .calls-table tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .status-badge {
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-        }
-        
-        .status-new { background: #e3f2fd; color: #1976d2; }
-        .status-assigned { background: #fff3e0; color: #f57c00; }
-        .status-progress { background: #f3e5f5; color: #7b1fa2; }
-        .status-completed { background: #e8f5e9; color: #388e3c; }
-        .status-critical { 
-            background: #ffebee; 
-            color: #c62828;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        
-        .urgency-badge {
-            padding: 0.25rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-        
-        .urgency-critical { background: #ffebee; color: #c62828; }
-        .urgency-high { background: #fff3e0; color: #f57c00; }
-        .urgency-normal { background: #e3f2fd; color: #1976d2; }
-        .urgency-low { background: #f1f8e9; color: #689f38; }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        .modal-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 2px solid var(--light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-header h2 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-        
-        .modal-body {
-            padding: 2rem;
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #7f8c8d;
-            padding: 0.5rem;
-        }
-        
-        .close-modal:hover {
-            color: var(--danger);
-        }
-        
-        .warranty-indicator {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .warranty-valid {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 2px solid #4caf50;
-        }
-        
-        .warranty-expired {
-            background: #ffebee;
-            color: #c62828;
-            border: 2px solid #f44336;
-        }
-        
-        .message {
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        
-        .message.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-left: 4px solid #4caf50;
-            display: block;
-        }
-        
-        .message.error {
-            background: #ffebee;
-            color: #c62828;
-            border-left: 4px solid #f44336;
-            display: block;
-        }
-        
-        .message.info {
-            background: #e3f2fd;
-            color: #1565c0;
-            border-left: 4px solid #2196f3;
-            display: block;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: #95a5a6;
-        }
-        
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .calls-table {
-                font-size: 0.85rem;
-            }
-            
-            .calls-table th, .calls-table td {
-                padding: 0.75rem 0.5rem;
-            }
-        }
+        .stat-label { font-size: 0.875rem; color: #7f8c8d; font-weight: 600; text-transform: uppercase; }
+        .stat-value { font-size: 2.5rem; font-weight: 800; font-family: 'Poppins', sans-serif; margin-top: 0.5rem; }
+        .section { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--light); }
+        .section-title { font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 700; }
+        .message { padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1rem; display: none; }
+        .message.success { background: #e8f5e9; color: #2e7d32; border-left: 4px solid #4caf50; display: block; }
+        .message.error { background: #ffebee; color: #c62828; border-left: 4px solid #f44336; display: block; }
+        .message.info { background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196f3; display: block; }
+        .empty-state { text-align: center; padding: 3rem 2rem; color: #95a5a6; }
+        .empty-state-icon { font-size: 4rem; margin-bottom: 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--bg); padding: 1rem; text-align: left; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; }
+        td { padding: 1rem; border-bottom: 1px solid var(--light); }
+        tr:hover { background: #f8f9fa; }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="header-content">
             <h1>🛠️ Service CRM - Coordinator</h1>
-            <div class="header-actions">
-                <div class="user-info">
-                    <span id="userName">Service Team</span>
-                </div>
-                <button class="btn btn-primary" onclick="showNewCallModal()">
-                    ➕ New Service Call
-                </button>
-            </div>
+            <button class="btn btn-primary" onclick="alert('Feature coming soon!')">➕ New Service Call</button>
         </div>
     </div>
     
     <div class="container">
-        <!-- Stats Dashboard -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Today's Calls</div>
@@ -458,414 +79,108 @@
             </div>
         </div>
         
-        <!-- Active Calls Section -->
         <div class="section">
             <div class="section-header">
                 <h2 class="section-title">📋 Active Service Calls</h2>
-                <button class="btn btn-primary" onclick="loadCallsFromSheet()">🔄 Refresh</button>
+                <button class="btn btn-primary" onclick="loadData()">🔄 Refresh</button>
             </div>
             
-            <div id="successMessage" class="message success"></div>
-            <div id="errorMessage" class="message error"></div>
-            <div id="infoMessage" class="message info"></div>
+            <div id="message" class="message"></div>
             
-            <table class="calls-table" id="callsTable">
-                <thead>
-                    <tr>
-                        <th>Call ID</th>
-                        <th>Hospital</th>
-                        <th>Equipment</th>
-                        <th>Type</th>
-                        <th>Urgency</th>
-                        <th>Engineer</th>
-                        <th>Status</th>
-                        <th>Scheduled</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="callsTableBody">
-                    <tr>
-                        <td colspan="9">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📞</div>
-                                <h3>No active calls</h3>
-                                <p>Click "New Service Call" to log a service request</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
-    <!-- New Call Modal -->
-    <div class="modal" id="newCallModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📋 Log New Service Call</h2>
-                <button class="close-modal" onclick="closeNewCallModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="newCallForm" onsubmit="submitNewCall(event)">
-                    <h3 style="margin-bottom: 1rem; color: var(--primary);">Hospital Information</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Hospital Name <span class="required">*</span></label>
-                            <input type="text" name="hospitalName" required placeholder="Enter hospital name">
-                        </div>
-                        <div class="form-group">
-                            <label>Contact Person <span class="required">*</span></label>
-                            <input type="text" name="contactPerson" required placeholder="e.g., Dr. Ramesh Kumar">
-                        </div>
-                        <div class="form-group">
-                            <label>Phone Number <span class="required">*</span></label>
-                            <input type="tel" name="phoneNumber" required pattern="[0-9]{10}" placeholder="10-digit number">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" name="email" placeholder="contact@hospital.com">
-                        </div>
-                        <div class="form-group">
-                            <label>City <span class="required">*</span></label>
-                            <select name="city" required>
-                                <option value="">Select City</option>
-                                <option value="Bangalore">Bangalore</option>
-                                <option value="Mumbai">Mumbai</option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Chennai">Chennai</option>
-                                <option value="Hyderabad">Hyderabad</option>
-                                <option value="Pune">Pune</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>State <span class="required">*</span></label>
-                            <select name="state" required>
-                                <option value="">Select State</option>
-                                <option value="Karnataka">Karnataka</option>
-                                <option value="Maharashtra">Maharashtra</option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Tamil Nadu">Tamil Nadu</option>
-                                <option value="Telangana">Telangana</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--primary);">Equipment Details</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Product Category <span class="required">*</span></label>
-                            <select name="productCategory" required>
-                                <option value="">Select Category</option>
-                                <option value="Fresenius Pumps">Fresenius Pumps</option>
-                                <option value="Syringe Pump">Syringe Pump</option>
-                                <option value="Infusion Pump">Infusion Pump</option>
-                                <option value="Massimo">Massimo</option>
-                                <option value="Striker">Striker</option>
-                                <option value="CNC">CNC</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Model <span class="required">*</span></label>
-                            <input type="text" name="model" required placeholder="e.g., FP950">
-                        </div>
-                        <div class="form-group">
-                            <label>Serial Number</label>
-                            <input type="text" name="serialNumber" placeholder="Equipment serial number">
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--primary);">Service Request</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Service Type <span class="required">*</span></label>
-                            <select name="serviceType" required>
-                                <option value="">Select Type</option>
-                                <option value="Installation">Installation</option>
-                                <option value="Repair">Repair</option>
-                                <option value="PMC">PMC (Preventive Maintenance)</option>
-                                <option value="Calibration">Calibration</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Urgency <span class="required">*</span></label>
-                            <select name="urgency" required>
-                                <option value="">Select Urgency</option>
-                                <option value="Critical">Critical (< 4 hours)</option>
-                                <option value="High">High (< 24 hours)</option>
-                                <option value="Normal">Normal (< 48 hours)</option>
-                                <option value="Low">Low</option>
-                            </select>
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Issue Description <span class="required">*</span></label>
-                            <textarea name="issueDescription" required placeholder="Describe the issue or service requirement"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Scheduled Date <span class="required">*</span></label>
-                            <input type="date" name="scheduledDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Scheduled Time <span class="required">*</span></label>
-                            <input type="time" name="scheduledTime" required>
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin: 2rem 0 1rem; color: var(--primary);">Assignment</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Assign Engineer <span class="required">*</span></label>
-                            <select name="assignedEngineer" required>
-                                <option value="">Select Engineer</option>
-                                <option value="Rajesh Kumar">Rajesh Kumar (Bangalore)</option>
-                                <option value="Priya Sharma">Priya Sharma (Bangalore)</option>
-                                <option value="Amit Patel">Amit Patel (Mumbai)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Estimated Duration (hours)</label>
-                            <input type="number" name="estimatedDuration" min="0.5" step="0.5" placeholder="e.g., 2.5">
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--light);">
-                        <button type="button" class="btn" onclick="closeNewCallModal()" style="background: #95a5a6; color: white;">Cancel</button>
-                        <button type="submit" class="btn btn-success">💾 Submit Service Call</button>
-                    </div>
-                </form>
+            <div id="tableContainer">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📞</div>
+                    <h3>Loading...</h3>
+                </div>
             </div>
         </div>
     </div>
     
     <script>
-        // ============================================
-        // CONFIGURATION - YOUR WEB APP URL
-        // ============================================
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
         
-        // Sample data (will be loaded from Google Sheets)
-        let serviceCalls = [];
+        window.onload = function() {
+            loadData();
+        };
         
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Test API connection
-            testAPIConnection();
+        function loadData() {
+            showMessage('info', 'Loading...');
             
-            // Load data from Google Sheets
-            loadCallsFromSheet();
-            updateStatsFromSheet();
+            const callback = 'jsonpCallback_' + Date.now();
+            window[callback] = function(data) {
+                console.log('Data received:', data);
+                
+                if (data && data.success) {
+                    const calls = data.data.calls || [];
+                    updateStats(calls);
+                    renderTable(calls);
+                    hideMessage();
+                } else {
+                    showMessage('error', 'Error loading data');
+                }
+                
+                delete window[callback];
+            };
             
-            // Set minimum date to tomorrow
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            document.querySelector('[name="scheduledDate"]').min = tomorrow.toISOString().split('T')[0];
-        });
-        
-        // Test API connection
-        function testAPIConnection() {
-            fetch(APPS_SCRIPT_URL + '?action=test')
-                .then(response => response.text())
-                .then(data => {
-                    console.log('✅ API Connected:', data);
-                })
-                .catch(error => {
-                    console.error('❌ API Connection Failed:', error);
-                });
-        }
-        
-        // Load calls from Google Sheets
-        function loadCallsFromSheet() {
-            showMessage('info', 'Loading data from server...');
-            
-            // Use direct URL approach for GET requests (works better with Apps Script)
-            const url = APPS_SCRIPT_URL + '?action=getActiveCalls&callback=handleCallsData';
-            
-            // Create script tag for JSONP-style request
             const script = document.createElement('script');
-            script.src = url;
+            script.src = API_URL + '?action=getActiveCalls&callback=' + callback;
             document.body.appendChild(script);
             
-            // Fallback after 5 seconds
             setTimeout(() => {
-                if (serviceCalls.length === 0) {
-                    document.getElementById('infoMessage').style.display = 'none';
-                    loadCalls();
-                    updateStats();
+                if (window[callback]) {
+                    showMessage('error', 'Connection timeout');
+                    delete window[callback];
                 }
-            }, 5000);
+            }, 10000);
         }
         
-        // Handle the response (will be called by Apps Script)
-        function handleCallsData(data) {
-            try {
-                if (data && data.success && data.data && data.data.calls) {
-                    serviceCalls = data.data.calls;
-                    loadCalls();
-                    updateStats();
-                    document.getElementById('infoMessage').style.display = 'none';
-                    showMessage('success', `✅ Loaded ${serviceCalls.length} active calls`);
-                    setTimeout(() => {
-                        document.getElementById('successMessage').style.display = 'none';
-                    }, 3000);
-                } else {
-                    throw new Error('Invalid data format');
-                }
-            } catch(error) {
-                console.error('Error processing calls:', error);
-                showMessage('error', 'Error loading data. Please refresh page.');
-                loadCalls();
-                updateStats();
-            }
+        function updateStats(calls) {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('todayCalls').textContent = calls.filter(c => c['Date Logged'] == today).length;
+            document.getElementById('completedToday').textContent = calls.filter(c => c.Status == 'Completed').length;
+            document.getElementById('pendingCalls').textContent = calls.filter(c => ['Assigned', 'In Progress'].includes(c.Status)).length;
+            document.getElementById('criticalCalls').textContent = calls.filter(c => c.Urgency == 'Critical').length;
         }
         
-        // Update stats from Google Sheets
-        function updateStatsFromSheet() {
-            fetch(APPS_SCRIPT_URL + '?action=getDashboardStats')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.data.stats) {
-                        const stats = data.data.stats;
-                        document.getElementById('todayCalls').textContent = stats.todayCalls;
-                        document.getElementById('completedToday').textContent = stats.completedToday;
-                        document.getElementById('pendingCalls').textContent = stats.pendingCalls;
-                        document.getElementById('criticalCalls').textContent = stats.criticalCalls;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading stats:', error);
-                });
-        }
-        
-        function showNewCallModal() {
-            document.getElementById('newCallModal').classList.add('active');
-        }
-        
-        function closeNewCallModal() {
-            document.getElementById('newCallModal').classList.remove('active');
-            document.getElementById('newCallForm').reset();
-        }
-        
-        function submitNewCall(event) {
-            event.preventDefault();
+        function renderTable(calls) {
+            const container = document.getElementById('tableContainer');
             
-            const formData = new FormData(event.target);
-            const callData = Object.fromEntries(formData);
-            
-            // Show loading message
-            showMessage('info', 'Submitting service call...');
-            
-            // Send to Google Apps Script
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Required for Apps Script
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'logServiceCall',
-                    callData: callData
-                })
-            })
-            .then(() => {
-                // Success! (note: no-cors mode doesn't give us response data)
-                showMessage('success', '✅ Service call logged successfully! Refreshing...');
-                
-                // Close modal and refresh data
-                setTimeout(() => {
-                    closeNewCallModal();
-                    loadCallsFromSheet();
-                }, 1500);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('error', '❌ Error submitting call. Please try again.');
-            });
-        }
-        
-        function generateCallId() {
-            const year = new Date().getFullYear();
-            const count = serviceCalls.length + 1;
-            return `SR-${year}-${String(count).padStart(4, '0')}`;
-        }
-        
-        function loadCalls() {
-            const tbody = document.getElementById('callsTableBody');
-            
-            if (serviceCalls.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="9">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📞</div>
-                                <h3>No active calls</h3>
-                                <p>Click "New Service Call" to log a service request</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+            if (calls.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📞</div><h3>No active calls</h3></div>';
                 return;
             }
             
-            tbody.innerHTML = serviceCalls.map(call => `
-                <tr>
-                    <td><strong>${call.callId}</strong></td>
-                    <td>${call.hospitalName}</td>
-                    <td>${call.model}</td>
-                    <td>${call.serviceType}</td>
-                    <td><span class="urgency-badge urgency-${call.urgency.toLowerCase()}">${call.urgency}</span></td>
-                    <td>${call.assignedEngineer}</td>
-                    <td><span class="status-badge status-${call.status.toLowerCase().replace(' ', '-')}">${call.status}</span></td>
-                    <td>${call.scheduledDate} ${call.scheduledTime}</td>
-                    <td>
-                        <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="viewCallDetails('${call.callId}')">
-                            View
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+            container.innerHTML = `
+                <table>
+                    <thead><tr>
+                        <th>Call ID</th><th>Hospital</th><th>Equipment</th><th>Type</th>
+                        <th>Urgency</th><th>Engineer</th><th>Status</th><th>Scheduled</th>
+                    </tr></thead>
+                    <tbody>${calls.map(c => `
+                        <tr>
+                            <td><strong>${c['Call ID']}</strong></td>
+                            <td>${c['Hospital Name']}</td>
+                            <td>${c['Equipment Model']}</td>
+                            <td>${c['Service Type']}</td>
+                            <td>${c.Urgency}</td>
+                            <td>${c['Assigned Engineer']}</td>
+                            <td>${c.Status}</td>
+                            <td>${c['Scheduled Date']}</td>
+                        </tr>
+                    `).join('')}</tbody>
+                </table>
+            `;
         }
         
-        function updateStats() {
-            const today = new Date().toISOString().split('T')[0];
-            
-            const todayCalls = serviceCalls.filter(c => c.dateLogged === today).length;
-            const completed = serviceCalls.filter(c => c.status === 'Completed' && c.dateLogged === today).length;
-            const pending = serviceCalls.filter(c => ['Assigned', 'In Progress'].includes(c.status)).length;
-            const critical = serviceCalls.filter(c => c.urgency === 'Critical' && c.status !== 'Completed').length;
-            
-            document.getElementById('todayCalls').textContent = todayCalls;
-            document.getElementById('completedToday').textContent = completed;
-            document.getElementById('pendingCalls').textContent = pending;
-            document.getElementById('criticalCalls').textContent = critical;
+        function showMessage(type, text) {
+            const msg = document.getElementById('message');
+            msg.className = 'message ' + type;
+            msg.textContent = text;
         }
         
-        function viewCallDetails(callId) {
-            const call = serviceCalls.find(c => c.callId === callId);
-            if (call) {
-                alert(`Call Details:\n\n${JSON.stringify(call, null, 2)}`);
-                // In production, show detailed modal
-            }
+        function hideMessage() {
+            document.getElementById('message').style.display = 'none';
         }
-        
-        function showMessage(type, message) {
-            const messageDiv = document.getElementById(type === 'success' ? 'successMessage' : type === 'error' ? 'errorMessage' : 'infoMessage');
-            messageDiv.textContent = message;
-            messageDiv.style.display = 'block';
-            
-            // Auto-hide after 5 seconds (except info messages during loading)
-            if (type !== 'info') {
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 5000);
-            }
-        }
-        
-        // Close modal when clicking outside
-        document.getElementById('newCallModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeNewCallModal();
-            }
-        });
     </script>
 </body>
 </html>
