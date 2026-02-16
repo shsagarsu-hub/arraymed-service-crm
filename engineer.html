@@ -307,12 +307,16 @@
         }
         
         function renderCalls() {
+            console.log('=== renderCalls() called ===');
+            console.log('Active calls:', activeCalls.length);
+            console.log('Completed calls:', completedCalls.length);
+            
             // Render active calls
             const activeContainer = document.getElementById('activeCallsContainer');
             if (!activeCalls.length) {
                 activeContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">🎉</div><h3>No Active Calls</h3><p>You\'re all caught up!</p></div>';
             } else {
-                activeContainer.innerHTML = activeCalls.map(renderCallCard).join('');
+                activeContainer.innerHTML = activeCalls.map(call => renderActiveCallCard(call)).join('');
             }
             
             // Render completed calls
@@ -320,20 +324,19 @@
             if (!completedCalls.length) {
                 completedContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><h3>No Completed Calls</h3><p>Complete your first call!</p></div>';
             } else {
-                completedContainer.innerHTML = completedCalls.map(c => renderCallCard(c, true)).join('');
+                completedContainer.innerHTML = completedCalls.map(call => renderCompletedCallCard(call)).join('');
             }
         }
         
-        function renderCallCard(call, isCompleted = false) {
+        function renderActiveCallCard(call) {
             const urgencyClass = (call.Urgency || 'Normal').toLowerCase();
             const cardClass = call.Urgency === 'Critical' ? 'critical' : '';
             
-            // Debug log
-            console.log(`Rendering ${call['Call ID']}: Status="${call.Status}", isCompleted=${isCompleted}`);
+            console.log(`Rendering ACTIVE ${call['Call ID']}: Status="${call.Status}"`);
             
             return `
-                <div class="call-card ${cardClass} ${isCompleted ? 'completed' : ''}">
-                    ${!isCompleted ? `<div class="urgency-badge urgency-${urgencyClass}">${call.Urgency || 'Normal'}</div>` : ''}
+                <div class="call-card ${cardClass}">
+                    <div class="urgency-badge urgency-${urgencyClass}">${call.Urgency || 'Normal'}</div>
                     <div class="call-id">${call['Call ID']}</div>
                     <div class="hospital">${call['Hospital Name']}</div>
                     <div class="details"><strong>Type:</strong> ${call['Service Type']}</div>
@@ -341,17 +344,31 @@
                     <div class="details"><strong>Issue:</strong> ${call['Issue Description']}</div>
                     <div class="details"><strong>Contact:</strong> ${call['Contact Person']} - ${call['Phone Number']}</div>
                     <div class="details"><strong>Scheduled:</strong> ${call['Scheduled Date']} ${call['Scheduled Time']}</div>
-                    <div class="details"><strong>Current Status:</strong> ${call.Status}</div>
-                    ${isCompleted ? `<div class="status-badge status-completed">✅ Completed</div>` : `<div class="details" style="color: #f39c12; font-weight: 600;">⏳ Status: ${call.Status}</div>`}
+                    <div class="details" style="color: #f39c12; font-weight: 600;">⏳ Status: ${call.Status}</div>
                     
-                    ${!isCompleted ? `
-                        <button class="btn btn-secondary btn-small" onclick="navigate('${call['Hospital Name']}', '${call.City}')">
-                            🗺️ Navigate
-                        </button>
-                        <button class="btn btn-primary btn-small" onclick="openModal('${call['Call ID']}')">
-                            📤 Submit Report
-                        </button>
-                    ` : ''}
+                    <button class="btn btn-secondary btn-small" onclick="navigate('${call['Hospital Name']}', '${call.City}')">
+                        🗺️ Navigate
+                    </button>
+                    <button class="btn btn-primary btn-small" onclick="openModal('${call['Call ID']}')">
+                        📤 Submit Report
+                    </button>
+                </div>
+            `;
+        }
+        
+        function renderCompletedCallCard(call) {
+            console.log(`Rendering COMPLETED ${call['Call ID']}: Status="${call.Status}"`);
+            
+            return `
+                <div class="call-card completed">
+                    <div class="call-id">${call['Call ID']}</div>
+                    <div class="hospital">${call['Hospital Name']}</div>
+                    <div class="details"><strong>Type:</strong> ${call['Service Type']}</div>
+                    <div class="details"><strong>Equipment:</strong> ${call['Equipment Model']}</div>
+                    <div class="details"><strong>Issue:</strong> ${call['Issue Description']}</div>
+                    <div class="details"><strong>Contact:</strong> ${call['Contact Person']} - ${call['Phone Number']}</div>
+                    <div class="details"><strong>Scheduled:</strong> ${call['Scheduled Date']} ${call['Scheduled Time']}</div>
+                    <div class="status-badge status-completed">✅ ${call.Status}</div>
                 </div>
             `;
         }
