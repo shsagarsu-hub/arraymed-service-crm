@@ -251,19 +251,42 @@
         function loadCalls() {
             const cb = 'cb_' + Date.now();
             window[cb] = function(data) {
+                console.log('=== API Response ===', data);
+                
                 if (data.success) {
                     allCalls = (data.data.calls || []).filter(c => c['Assigned Engineer'] === engineer);
                     
-                    // Split into active and completed (case-insensitive and trim spaces)
-                    activeCalls = allCalls.filter(c => {
-                        const status = (c.Status || '').toString().trim().toLowerCase();
-                        return status !== 'completed' && status !== 'cancelled' && status !== 'closed';
+                    console.log('=== All Calls for', engineer, '===');
+                    allCalls.forEach(c => {
+                        console.log(`${c['Call ID']}: Status="${c.Status}" (type: ${typeof c.Status})`);
                     });
                     
-                    completedCalls = allCalls.filter(c => {
-                        const status = (c.Status || '').toString().trim().toLowerCase();
-                        return status === 'completed' || status === 'cancelled' || status === 'closed';
+                    // Split into active and completed - FIXED LOGIC
+                    activeCalls = [];
+                    completedCalls = [];
+                    
+                    allCalls.forEach(call => {
+                        if (!call.Status) {
+                            // No status = active
+                            activeCalls.push(call);
+                            console.log(`${call['Call ID']}: NO STATUS -> Active`);
+                        } else {
+                            const status = call.Status.toString().trim().toLowerCase();
+                            console.log(`${call['Call ID']}: Checking status "${status}"`);
+                            
+                            if (status === 'completed' || status === 'cancelled' || status === 'closed') {
+                                completedCalls.push(call);
+                                console.log(`${call['Call ID']}: "${call.Status}" -> Completed tab`);
+                            } else {
+                                activeCalls.push(call);
+                                console.log(`${call['Call ID']}: "${call.Status}" -> Active tab`);
+                            }
+                        }
                     });
+                    
+                    console.log('=== Final Split ===');
+                    console.log('Active:', activeCalls.map(c => c['Call ID']));
+                    console.log('Completed:', completedCalls.map(c => c['Call ID']));
                     
                     updateStats();
                     renderCalls();
