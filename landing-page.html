@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#3498db">
+    <title>ArrayMed Service CRM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        .cards {
+            display: grid;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: block;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .card-desc {
+            font-size: 0.95rem;
+            color: #7f8c8d;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        .card.coordinator {
+            border-left: 5px solid #3498db;
+        }
+        .card.engineer {
+            border-left: 5px solid #2ecc71;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .card { padding: 25px; }
+            .card-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🛠️</div>
+            <h1>ArrayMed Service CRM</h1>
+            <p class="subtitle">Choose your portal</p>
+        </div>
+        
+        <div class="cards">
+            <a href="coordinator.html" class="card coordinator">
+                <span class="card-icon">📋</span>
+                <div class="card-title">Coordinator Portal</div>
+                <div class="card-desc">Log service calls, assign engineers, track status, and manage operations</div>
+            </a>
+            
+            <a href="engineer.html" class="card engineer">
+                <span class="card-icon">👷</span>
+                <div class="card-title">Engineer Portal</div>
+                <div class="card-desc">View assigned calls, navigate to hospitals, submit reports and costs</div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            ArrayMed Service CRM © 2026
+        </div>
+    </div>
+</body>
+</html>
