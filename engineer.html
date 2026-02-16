@@ -9,13 +9,16 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f8f9fa; padding-bottom: 70px; }
-        .header { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; padding: 1.5rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header h1 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
+        .header { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; padding: 1rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .header h1 { font-family: 'Poppins', sans-serif; font-size: 1.3rem; font-weight: 800; }
+        .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+        .logout-btn:active { background: rgba(255,255,255,0.3); }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
         .stat-box { background: rgba(255,255,255,0.2); padding: 0.75rem; border-radius: 8px; text-align: center; }
         .stat-value { font-size: 1.5rem; font-weight: 800; font-family: 'Poppins', sans-serif; }
         .stat-label { font-size: 0.7rem; margin-top: 0.25rem; opacity: 0.95; }
-        .tabs { display: flex; background: white; border-bottom: 2px solid #ecf0f1; position: sticky; top: 122px; z-index: 99; }
+        .tabs { display: flex; background: white; border-bottom: 2px solid #ecf0f1; position: sticky; top: 105px; z-index: 99; }
         .tab { flex: 1; padding: 1rem; text-align: center; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
         .tab.active { color: #2ecc71; border-bottom-color: #2ecc71; background: #f8f9fa; }
         .tab-content { display: none; }
@@ -33,12 +36,9 @@
         .urgency-normal { background: #e3f2fd; color: #1976d2; }
         .status-badge { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 15px; font-size: 0.7rem; font-weight: 700; margin-top: 0.5rem; }
         .status-completed { background: #e8f5e9; color: #2e7d32; }
-        .status-assigned { background: #fff3e0; color: #f57c00; }
-        .status-progress { background: #e3f2fd; color: #1976d2; }
         .btn { width: 100%; padding: 0.7rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem; margin-top: 0.5rem; }
         .btn-primary { background: #2ecc71; color: white; }
         .btn-secondary { background: #3498db; color: white; }
-        .btn-outline { background: white; color: #2ecc71; border: 2px solid #2ecc71; }
         .btn-small { padding: 0.5rem; font-size: 0.85rem; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; overflow-y: auto; }
         .modal.active { display: block; }
@@ -70,6 +70,7 @@
     <div id="loginScreen">
         <div class="login-card">
             <div class="logo-text">🛠️ ArrayMed</div>
+            <p style="text-align: center; color: #666; margin-bottom: 1.5rem;">Engineer Portal Login</p>
             <select id="engineerName" style="margin-bottom: 1rem;">
                 <option value="">Select Your Name</option>
                 <option value="Rajesh Kumar">Rajesh Kumar</option>
@@ -84,7 +85,10 @@
     <!-- Main App -->
     <div id="appScreen" style="display: none;">
         <div class="header">
-            <h1 id="headerName">📋 My Calls</h1>
+            <div class="header-top">
+                <h1 id="headerName">📋 My Calls</h1>
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
             <div class="stats-row">
                 <div class="stat-box">
                     <div class="stat-value" id="totalCalls">0</div>
@@ -224,6 +228,20 @@
             engineer = document.getElementById('engineerName').value;
             if (!engineer) return alert('Please select your name');
             localStorage.setItem('engineer', engineer);
+            showApp();
+        }
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('engineer');
+                engineer = null;
+                document.getElementById('loginScreen').style.display = 'block';
+                document.getElementById('appScreen').style.display = 'none';
+                document.getElementById('engineerName').value = '';
+            }
+        }
+        
+        function showApp() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'block';
             document.getElementById('headerName').textContent = '👷 ' + engineer;
@@ -305,15 +323,10 @@
         }
         
         function showTab(tab) {
-            // Update tab buttons
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab')[tab === 'active' ? 0 : 1].classList.add('active');
-            
-            // Update bottom nav
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.nav-btn')[tab === 'active' ? 0 : 2].classList.add('active');
-            
-            // Show correct content
             document.getElementById('activeTab').classList.remove('active');
             document.getElementById('completedTab').classList.remove('active');
             document.getElementById(tab + 'Tab').classList.add('active');
@@ -326,7 +339,6 @@
         function openModal(id) {
             document.getElementById('uploadCallId').value = id;
             document.getElementById('uploadModal').classList.add('active');
-            // Reset form
             document.getElementById('partsCost').value = '';
             document.getElementById('laborCost').value = '';
             document.getElementById('travelCost').value = '';
@@ -349,12 +361,8 @@
             const travelCost = document.getElementById('travelCost').value || 0;
             const notes = document.getElementById('serviceNotes').value;
             
-            // Calculate total
             const total = parseFloat(partsCost) + parseFloat(laborCost) + parseFloat(travelCost);
             
-            console.log('Submitting:', { callId, partsCost, laborCost, travelCost, total, notes });
-            
-            // Submit service report with costs
             fetch(API, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -372,7 +380,6 @@
                     }
                 })
             }).then(() => {
-                // Update call status
                 return fetch(API, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -389,13 +396,15 @@
             });
         }
         
+        // Check if logged in on page load
         window.onload = () => {
             engineer = localStorage.getItem('engineer');
             if (engineer) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appScreen').style.display = 'block';
-                document.getElementById('headerName').textContent = '👷 ' + engineer;
-                loadCalls();
+                showApp();
+            } else {
+                // Force show login screen
+                document.getElementById('loginScreen').style.display = 'block';
+                document.getElementById('appScreen').style.display = 'none';
             }
         };
     </script>
