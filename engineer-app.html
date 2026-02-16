@@ -8,18 +8,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f8f9fa; }
+        body { font-family: 'Inter', sans-serif; background: #f8f9fa; padding-bottom: 70px; }
         .header { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; padding: 1.5rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header h1 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
+        .stat-box { background: rgba(255,255,255,0.2); padding: 0.75rem; border-radius: 8px; text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: 800; font-family: 'Poppins', sans-serif; }
+        .stat-label { font-size: 0.7rem; margin-top: 0.25rem; opacity: 0.95; }
+        .tabs { display: flex; background: white; border-bottom: 2px solid #ecf0f1; position: sticky; top: 122px; z-index: 99; }
+        .tab { flex: 1; padding: 1rem; text-align: center; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .tab.active { color: #2ecc71; border-bottom-color: #2ecc71; background: #f8f9fa; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
         .container { padding: 1rem; max-width: 600px; margin: 0 auto; }
-        .call-card { background: white; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #2ecc71; }
+        .call-card { background: white; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #2ecc71; position: relative; }
         .call-card.critical { border-left-color: #e74c3c; background: #fff5f5; }
-        .call-id { font-family: 'Poppins', sans-serif; font-weight: 700; color: #2ecc71; margin-bottom: 0.5rem; }
-        .hospital { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .details { color: #666; font-size: 0.9rem; margin: 0.3rem 0; }
-        .btn { width: 100%; padding: 0.75rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; margin-top: 0.75rem; }
+        .call-card.completed { opacity: 0.8; border-left-color: #95a5a6; }
+        .call-id { font-family: 'Poppins', sans-serif; font-weight: 700; color: #2ecc71; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .hospital { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; }
+        .details { color: #666; font-size: 0.85rem; margin: 0.25rem 0; }
+        .urgency-badge { position: absolute; top: 1rem; right: 1rem; padding: 0.25rem 0.6rem; border-radius: 15px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .urgency-critical { background: #ffebee; color: #c62828; }
+        .urgency-high { background: #fff3e0; color: #f57c00; }
+        .urgency-normal { background: #e3f2fd; color: #1976d2; }
+        .status-badge { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 15px; font-size: 0.7rem; font-weight: 700; margin-top: 0.5rem; }
+        .status-completed { background: #e8f5e9; color: #2e7d32; }
+        .status-assigned { background: #fff3e0; color: #f57c00; }
+        .status-progress { background: #e3f2fd; color: #1976d2; }
+        .btn { width: 100%; padding: 0.7rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem; margin-top: 0.5rem; }
         .btn-primary { background: #2ecc71; color: white; }
         .btn-secondary { background: #3498db; color: white; }
+        .btn-outline { background: white; color: #2ecc71; border: 2px solid #2ecc71; }
+        .btn-small { padding: 0.5rem; font-size: 0.85rem; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; overflow-y: auto; }
         .modal.active { display: block; }
         .modal-content { background: white; margin: 2rem auto; border-radius: 16px; padding: 1.5rem; max-width: 600px; }
@@ -27,24 +47,30 @@
         .modal-title { font-family: 'Poppins', sans-serif; font-size: 1.3rem; font-weight: 700; }
         .close-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: #95a5a6; }
         .form-group { margin-bottom: 1.25rem; }
-        label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
-        textarea { width: 100%; padding: 0.75rem; border: 2px solid #ecf0f1; border-radius: 8px; font-size: 1rem; min-height: 100px; }
-        .upload-area { border: 2px dashed #ecf0f1; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; }
+        label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        input, textarea, select { width: 100%; padding: 0.75rem; border: 2px solid #ecf0f1; border-radius: 8px; font-size: 0.95rem; font-family: 'Inter', sans-serif; }
+        textarea { min-height: 80px; resize: vertical; }
+        .upload-area { border: 2px dashed #ecf0f1; border-radius: 8px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; }
         .upload-area:hover { border-color: #2ecc71; background: #f8f9fa; }
         .upload-area input { display: none; }
-        .file-preview { margin-top: 1rem; padding: 0.75rem; background: #e8f5e9; border-radius: 8px; font-size: 0.9rem; }
-        .empty-state { text-align: center; padding: 3rem 1rem; color: #95a5a6; }
-        .empty-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .file-preview { margin-top: 0.75rem; padding: 0.75rem; background: #e8f5e9; border-radius: 8px; font-size: 0.85rem; }
+        .empty-state { text-align: center; padding: 2.5rem 1rem; color: #95a5a6; }
+        .empty-icon { font-size: 3.5rem; margin-bottom: 0.75rem; }
         .login-card { background: white; padding: 2rem; border-radius: 16px; max-width: 400px; margin: 3rem auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .logo-text { font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 800; color: #2ecc71; text-align: center; margin-bottom: 2rem; }
-        select { width: 100%; padding: 0.75rem; border: 2px solid #ecf0f1; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; }
+        select { appearance: none; background: white; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 98; }
+        .nav-btn { flex: 1; padding: 0.75rem; border: none; background: none; cursor: pointer; font-size: 0.8rem; font-weight: 600; color: #666; transition: all 0.2s; }
+        .nav-btn.active { color: #2ecc71; background: #f8f9fa; }
+        .nav-icon { font-size: 1.3rem; display: block; margin-bottom: 0.25rem; }
     </style>
 </head>
 <body>
+    <!-- Login Screen -->
     <div id="loginScreen">
         <div class="login-card">
             <div class="logo-text">🛠️ ArrayMed</div>
-            <select id="engineerName">
+            <select id="engineerName" style="margin-bottom: 1rem;">
                 <option value="">Select Your Name</option>
                 <option value="Rajesh Kumar">Rajesh Kumar</option>
                 <option value="Priya Sharma">Priya Sharma</option>
@@ -55,47 +81,119 @@
         </div>
     </div>
     
+    <!-- Main App -->
     <div id="appScreen" style="display: none;">
         <div class="header">
             <h1 id="headerName">📋 My Calls</h1>
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-value" id="totalCalls">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="activeCalls">0</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="completedCalls">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
         </div>
-        <div class="container">
-            <button class="btn btn-primary" onclick="loadCalls()" style="margin-bottom: 1rem;">🔄 Refresh</button>
-            <div id="callsContainer"></div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('active')">
+                🔥 Active (<span id="activeCount">0</span>)
+            </div>
+            <div class="tab" onclick="showTab('completed')">
+                ✅ Completed (<span id="completedCount">0</span>)
+            </div>
+        </div>
+        
+        <!-- Active Calls Tab -->
+        <div id="activeTab" class="tab-content active">
+            <div class="container">
+                <button class="btn btn-primary btn-small" onclick="loadCalls()" style="margin-bottom: 1rem;">🔄 Refresh</button>
+                <div id="activeCallsContainer"></div>
+            </div>
+        </div>
+        
+        <!-- Completed Calls Tab -->
+        <div id="completedTab" class="tab-content">
+            <div class="container">
+                <div id="completedCallsContainer"></div>
+            </div>
+        </div>
+        
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+            <button class="nav-btn active" onclick="showTab('active')">
+                <span class="nav-icon">🔥</span>
+                Active
+            </button>
+            <button class="nav-btn" onclick="loadCalls()">
+                <span class="nav-icon">🔄</span>
+                Refresh
+            </button>
+            <button class="nav-btn" onclick="showTab('completed')">
+                <span class="nav-icon">✅</span>
+                Done
+            </button>
         </div>
     </div>
     
+    <!-- Upload Modal -->
     <div id="uploadModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">📤 Upload Report</div>
+                <div class="modal-title">📤 Submit Service Report</div>
                 <button class="close-btn" onclick="closeModal()">×</button>
             </div>
-            <form onsubmit="submitUpload(event)">
+            <form onsubmit="submitReport(event)">
                 <input type="hidden" id="uploadCallId">
+                
                 <div class="form-group">
-                    <label>📝 Service Report</label>
+                    <label>💰 Parts Cost (₹)</label>
+                    <input type="number" id="partsCost" min="0" step="0.01" placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label>👷 Labor Cost (₹)</label>
+                    <input type="number" id="laborCost" min="0" step="0.01" placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label>🚗 Travel Cost (₹)</label>
+                    <input type="number" id="travelCost" min="0" step="0.01" placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label>📝 Service Notes</label>
+                    <textarea id="serviceNotes" placeholder="What was the issue? What did you fix?"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>📄 Upload Service Report (PDF/Images)</label>
                     <div class="upload-area" onclick="document.getElementById('reportFile').click()">
-                        <div style="font-size: 3rem;">📄</div>
-                        <div style="color: #2ecc71; font-weight: 600;">Upload Report</div>
+                        <div style="font-size: 2.5rem;">📄</div>
+                        <div style="color: #2ecc71; font-weight: 600; font-size: 0.9rem;">Tap to Upload</div>
                         <input type="file" id="reportFile" accept=".pdf,.doc,.docx,image/*" multiple>
                     </div>
                     <div id="reportPreview" class="file-preview" style="display: none;"></div>
                 </div>
+                
                 <div class="form-group">
-                    <label>🎥 360° Video</label>
+                    <label>🎥 Upload 360° Video</label>
                     <div class="upload-area" onclick="document.getElementById('videoFile').click()">
-                        <div style="font-size: 3rem;">📹</div>
-                        <div style="color: #2ecc71; font-weight: 600;">Upload Video</div>
+                        <div style="font-size: 2.5rem;">📹</div>
+                        <div style="color: #2ecc71; font-weight: 600; font-size: 0.9rem;">Tap to Upload</div>
                         <input type="file" id="videoFile" accept="video/*">
                     </div>
                     <div id="videoPreview" class="file-preview" style="display: none;"></div>
                 </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea id="notes" placeholder="Add notes..."></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Upload</button>
+                
+                <button type="submit" class="btn btn-primary">Submit & Complete</button>
             </form>
         </div>
     </div>
@@ -103,11 +201,14 @@
     <script>
         const API = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
         let engineer = null;
-        let calls = [];
+        let allCalls = [];
+        let activeCalls = [];
+        let completedCalls = [];
         
+        // File upload previews
         document.getElementById('reportFile').onchange = (e) => {
             if (e.target.files.length) {
-                document.getElementById('reportPreview').textContent = `📄 ${e.target.files.length} file(s)`;
+                document.getElementById('reportPreview').textContent = `📄 ${e.target.files.length} file(s) selected`;
                 document.getElementById('reportPreview').style.display = 'block';
             }
         };
@@ -121,7 +222,7 @@
         
         function login() {
             engineer = document.getElementById('engineerName').value;
-            if (!engineer) return alert('Select name');
+            if (!engineer) return alert('Please select your name');
             localStorage.setItem('engineer', engineer);
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'block';
@@ -133,7 +234,13 @@
             const cb = 'cb_' + Date.now();
             window[cb] = function(data) {
                 if (data.success) {
-                    calls = (data.data.calls || []).filter(c => c['Assigned Engineer'] === engineer);
+                    allCalls = (data.data.calls || []).filter(c => c['Assigned Engineer'] === engineer);
+                    
+                    // Split into active and completed
+                    activeCalls = allCalls.filter(c => c.Status !== 'Completed');
+                    completedCalls = allCalls.filter(c => c.Status === 'Completed');
+                    
+                    updateStats();
                     renderCalls();
                 }
                 delete window[cb];
@@ -143,14 +250,39 @@
             document.body.appendChild(s);
         }
         
+        function updateStats() {
+            document.getElementById('totalCalls').textContent = allCalls.length;
+            document.getElementById('activeCalls').textContent = activeCalls.length;
+            document.getElementById('completedCalls').textContent = completedCalls.length;
+            document.getElementById('activeCount').textContent = activeCalls.length;
+            document.getElementById('completedCount').textContent = completedCalls.length;
+        }
+        
         function renderCalls() {
-            const c = document.getElementById('callsContainer');
-            if (!calls.length) {
-                c.innerHTML = '<div class="empty-state"><div class="empty-icon">📞</div><h3>No Calls</h3></div>';
-                return;
+            // Render active calls
+            const activeContainer = document.getElementById('activeCallsContainer');
+            if (!activeCalls.length) {
+                activeContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">🎉</div><h3>No Active Calls</h3><p>You\'re all caught up!</p></div>';
+            } else {
+                activeContainer.innerHTML = activeCalls.map(renderCallCard).join('');
             }
-            c.innerHTML = calls.map(call => `
-                <div class="call-card ${call.Urgency === 'Critical' ? 'critical' : ''}">
+            
+            // Render completed calls
+            const completedContainer = document.getElementById('completedCallsContainer');
+            if (!completedCalls.length) {
+                completedContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><h3>No Completed Calls</h3><p>Complete your first call!</p></div>';
+            } else {
+                completedContainer.innerHTML = completedCalls.map(c => renderCallCard(c, true)).join('');
+            }
+        }
+        
+        function renderCallCard(call, isCompleted = false) {
+            const urgencyClass = (call.Urgency || 'Normal').toLowerCase();
+            const cardClass = call.Urgency === 'Critical' ? 'critical' : '';
+            
+            return `
+                <div class="call-card ${cardClass} ${isCompleted ? 'completed' : ''}">
+                    ${!isCompleted ? `<div class="urgency-badge urgency-${urgencyClass}">${call.Urgency || 'Normal'}</div>` : ''}
                     <div class="call-id">${call['Call ID']}</div>
                     <div class="hospital">${call['Hospital Name']}</div>
                     <div class="details"><strong>Type:</strong> ${call['Service Type']}</div>
@@ -158,10 +290,33 @@
                     <div class="details"><strong>Issue:</strong> ${call['Issue Description']}</div>
                     <div class="details"><strong>Contact:</strong> ${call['Contact Person']} - ${call['Phone Number']}</div>
                     <div class="details"><strong>Scheduled:</strong> ${call['Scheduled Date']} ${call['Scheduled Time']}</div>
-                    <button class="btn btn-secondary" onclick="navigate('${call['Hospital Name']}', '${call.City}')">🗺️ Navigate</button>
-                    <button class="btn btn-primary" onclick="openModal('${call['Call ID']}')">📤 Upload Report</button>
+                    ${isCompleted ? `<div class="status-badge status-completed">✅ Completed</div>` : ''}
+                    
+                    ${!isCompleted ? `
+                        <button class="btn btn-secondary btn-small" onclick="navigate('${call['Hospital Name']}', '${call.City}')">
+                            🗺️ Navigate
+                        </button>
+                        <button class="btn btn-primary btn-small" onclick="openModal('${call['Call ID']}')">
+                            📤 Submit Report
+                        </button>
+                    ` : ''}
                 </div>
-            `).join('');
+            `;
+        }
+        
+        function showTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab')[tab === 'active' ? 0 : 1].classList.add('active');
+            
+            // Update bottom nav
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.nav-btn')[tab === 'active' ? 0 : 2].classList.add('active');
+            
+            // Show correct content
+            document.getElementById('activeTab').classList.remove('active');
+            document.getElementById('completedTab').classList.remove('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
         }
         
         function navigate(h, c) {
@@ -171,28 +326,66 @@
         function openModal(id) {
             document.getElementById('uploadCallId').value = id;
             document.getElementById('uploadModal').classList.add('active');
+            // Reset form
+            document.getElementById('partsCost').value = '';
+            document.getElementById('laborCost').value = '';
+            document.getElementById('travelCost').value = '';
+            document.getElementById('serviceNotes').value = '';
+            document.getElementById('reportFile').value = '';
+            document.getElementById('videoFile').value = '';
+            document.getElementById('reportPreview').style.display = 'none';
+            document.getElementById('videoPreview').style.display = 'none';
         }
         
         function closeModal() {
             document.getElementById('uploadModal').classList.remove('active');
         }
         
-        function submitUpload(e) {
+        function submitReport(e) {
             e.preventDefault();
-            const id = document.getElementById('uploadCallId').value;
+            const callId = document.getElementById('uploadCallId').value;
+            const partsCost = document.getElementById('partsCost').value || 0;
+            const laborCost = document.getElementById('laborCost').value || 0;
+            const travelCost = document.getElementById('travelCost').value || 0;
+            const notes = document.getElementById('serviceNotes').value;
             
+            // Calculate total
+            const total = parseFloat(partsCost) + parseFloat(laborCost) + parseFloat(travelCost);
+            
+            console.log('Submitting:', { callId, partsCost, laborCost, travelCost, total, notes });
+            
+            // Submit service report with costs
             fetch(API, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify({
-                    action: 'updateCallStatus',
-                    callId: id,
-                    status: 'Completed'
+                    action: 'submitServiceReport',
+                    reportData: {
+                        callId: callId,
+                        engineerName: engineer,
+                        partsCost: partsCost,
+                        laborCost: laborCost,
+                        travelCost: travelCost,
+                        issueFound: notes,
+                        actionTaken: notes,
+                        resolutionStatus: 'Resolved'
+                    }
                 })
             }).then(() => {
-                alert('✅ Report uploaded! Call completed.');
+                // Update call status
+                return fetch(API, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        action: 'updateCallStatus',
+                        callId: callId,
+                        status: 'Completed'
+                    })
+                });
+            }).then(() => {
+                alert(`✅ Report submitted!\n\nCosts:\nParts: ₹${partsCost}\nLabor: ₹${laborCost}\nTravel: ₹${travelCost}\nTotal: ₹${total.toFixed(2)}`);
                 closeModal();
-                loadCalls();
+                setTimeout(loadCalls, 1000);
             });
         }
         
