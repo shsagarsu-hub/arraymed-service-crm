@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#2ecc71">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>ArrayMed Engineer App</title>
+    <title>ArrayMed Engineer - Service Reports</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
@@ -17,7 +16,6 @@
             --primary: #2ecc71;
             --danger: #e74c3c;
             --warning: #f39c12;
-            --info: #3498db;
             --dark: #2c3e50;
             --light: #ecf0f1;
             --bg: #f8f9fa;
@@ -27,74 +25,45 @@
             font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--dark);
-            padding-bottom: 80px;
+            padding-bottom: 2rem;
         }
         
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, #27ae60 100%);
             color: white;
-            padding: 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 1.5rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-        
-        .engineer-name {
+        .header h1 {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-        
-        .date-badge {
-            background: rgba(255,255,255,0.3);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-        
-        .stats-bar {
-            display: flex;
-            justify-content: space-around;
-            background: rgba(255,255,255,0.2);
-            padding: 0.75rem;
-            border-radius: 8px;
-        }
-        
-        .stat-item {
+            font-size: 1.4rem;
+            font-weight: 800;
             text-align: center;
         }
         
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            opacity: 0.9;
+        .engineer-info {
+            text-align: center;
+            margin-top: 0.75rem;
+            opacity: 0.95;
         }
         
         .container {
+            max-width: 700px;
+            margin: 0 auto;
             padding: 1rem;
+        }
+        
+        .calls-section {
+            margin-bottom: 2rem;
         }
         
         .section-title {
             font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
             margin: 1.5rem 0 1rem;
             color: var(--dark);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
         .call-card {
@@ -104,7 +73,6 @@
             margin-bottom: 1rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             border-left: 4px solid var(--primary);
-            position: relative;
         }
         
         .call-card.critical {
@@ -112,76 +80,39 @@
             background: #fff5f5;
         }
         
-        .call-card.high {
-            border-left-color: var(--warning);
-        }
-        
         .call-id {
             font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 0.5rem;
-        }
-        
-        .urgency-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.3rem 0.7rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        
-        .urgency-critical {
-            background: #ffebee;
-            color: #c62828;
-        }
-        
-        .urgency-high {
-            background: #fff3e0;
-            color: #f57c00;
-        }
-        
-        .urgency-normal {
-            background: #e3f2fd;
-            color: #1976d2;
         }
         
         .hospital-name {
             font-weight: 700;
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
-            color: var(--dark);
         }
         
-        .call-details {
-            color: #666;
-            font-size: 0.9rem;
+        .call-detail {
             margin: 0.3rem 0;
+            font-size: 0.95rem;
+            color: #555;
         }
         
-        .call-details strong {
+        .call-detail strong {
             color: var(--dark);
-        }
-        
-        .call-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
         }
         
         .btn {
-            flex: 1;
-            padding: 0.75rem;
+            width: 100%;
+            padding: 0.9rem;
             border: none;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
+            margin-top: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -198,31 +129,10 @@
             transform: scale(0.98);
         }
         
-        .btn-secondary {
-            background: var(--info);
-            color: white;
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-        
         .btn-outline {
             background: white;
             color: var(--primary);
             border: 2px solid var(--primary);
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #95a5a6;
-        }
-        
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
         }
         
         .modal {
@@ -232,24 +142,26 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             z-index: 1000;
             overflow-y: auto;
+            padding: 1rem;
         }
         
         .modal.active {
-            display: block;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
         }
         
         .modal-content {
             background: white;
-            margin: 1rem;
             border-radius: 16px;
             padding: 1.5rem;
             max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
             margin-top: 2rem;
+            margin-bottom: 2rem;
         }
         
         .modal-header {
@@ -272,8 +184,7 @@
             border: none;
             font-size: 2rem;
             cursor: pointer;
-            color: #95a5a6;
-            padding: 0;
+            color: #999;
             line-height: 1;
         }
         
@@ -285,7 +196,10 @@
             display: block;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: var(--dark);
+        }
+        
+        label .required {
+            color: var(--danger);
         }
         
         input, select, textarea {
@@ -307,53 +221,52 @@
             min-height: 100px;
         }
         
-        .photo-upload {
-            border: 2px dashed var(--light);
-            border-radius: 8px;
+        .upload-area {
+            border: 3px dashed var(--light);
+            border-radius: 12px;
             padding: 2rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            background: #fafafa;
         }
         
-        .photo-upload:hover {
+        .upload-area:hover {
             border-color: var(--primary);
-            background: #f8f9fa;
+            background: #f0fff4;
         }
         
-        .photo-upload input {
-            display: none;
+        .upload-icon {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
         }
         
-        .signature-pad {
-            border: 2px solid var(--light);
-            border-radius: 8px;
-            width: 100%;
-            height: 200px;
-            cursor: crosshair;
-        }
-        
-        .status-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin: 1rem 0;
-        }
-        
-        .status-option {
-            padding: 1rem;
-            border: 2px solid var(--light);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-        }
-        
-        .status-option.selected {
-            border-color: var(--primary);
-            background: #e8f5e9;
+        .upload-text {
             color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .upload-hint {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .file-list {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
         }
         
         .message {
@@ -361,6 +274,10 @@
             border-radius: 8px;
             margin-bottom: 1rem;
             display: none;
+        }
+        
+        .message.show {
+            display: block;
         }
         
         .message.success {
@@ -375,49 +292,26 @@
             border-left: 4px solid #f44336;
         }
         
-        .message.show {
-            display: block;
+        .message.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
         }
         
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 0.75rem 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .nav-item {
+        .empty-state {
             text-align: center;
-            flex: 1;
-            padding: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            background: none;
+            padding: 3rem 1rem;
+            color: #999;
         }
         
-        .nav-item.active {
-            color: var(--primary);
-        }
-        
-        .nav-icon {
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .nav-label {
-            font-size: 0.7rem;
-            font-weight: 600;
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
         }
         
         .login-container {
             max-width: 400px;
-            margin: 3rem auto;
+            margin: 4rem auto;
             padding: 2rem;
         }
         
@@ -433,11 +327,29 @@
             margin-bottom: 2rem;
         }
         
+        .logo-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
         .logo-text {
             font-family: 'Poppins', sans-serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: var(--primary);
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -447,7 +359,8 @@
         <div class="login-container">
             <div class="login-card">
                 <div class="logo">
-                    <div class="logo-text">🛠️ ArrayMed</div>
+                    <div class="logo-icon">🛠️</div>
+                    <div class="logo-text">ArrayMed</div>
                     <p style="color: #666; margin-top: 0.5rem;">Engineer Portal</p>
                 </div>
                 
@@ -462,8 +375,8 @@
                         </small>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-                        Login
+                    <button type="submit" class="btn btn-primary">
+                        🔐 Login
                     </button>
                 </form>
             </div>
@@ -472,57 +385,26 @@
     
     <!-- Main App Screen -->
     <div id="appScreen" style="display: none;">
-        <!-- Header -->
         <div class="header">
-            <div class="header-top">
-                <div>
-                    <div class="engineer-name" id="engineerName">👷 Loading...</div>
-                    <div style="font-size: 0.85rem; opacity: 0.9;" id="engineerCity"></div>
-                </div>
-                <div class="date-badge" id="currentDate"></div>
-            </div>
-            
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <div class="stat-value" id="totalAssigned">0</div>
-                    <div class="stat-label">Assigned</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="totalCompleted">0</div>
-                    <div class="stat-label">Completed</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="totalPending">0</div>
-                    <div class="stat-label">Pending</div>
-                </div>
-            </div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <h1>📋 My Service Calls</h1>
+            <div class="engineer-info" id="engineerInfo">Loading...</div>
         </div>
         
-        <!-- Main Content -->
         <div class="container">
             <div id="appMessage" class="message"></div>
             
-            <div class="section-title">🚨 Critical & High Priority</div>
-            <div id="urgentCallsContainer"></div>
+            <button class="btn btn-primary" onclick="loadMyCalls()" style="margin-bottom: 1rem;">
+                🔄 Refresh Calls
+            </button>
             
-            <div class="section-title">📋 Other Assigned Calls</div>
-            <div id="normalCallsContainer"></div>
-        </div>
-        
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav">
-            <button class="nav-item active" onclick="showView('calls')">
-                <div class="nav-icon">📋</div>
-                <div class="nav-label">My Calls</div>
-            </button>
-            <button class="nav-item" onclick="loadMyCalls()">
-                <div class="nav-icon">🔄</div>
-                <div class="nav-label">Refresh</div>
-            </button>
-            <button class="nav-item" onclick="logout()">
-                <div class="nav-icon">🚪</div>
-                <div class="nav-label">Logout</div>
-            </button>
+            <div class="section-title">Your Assigned Calls</div>
+            <div id="callsContainer">
+                <div class="empty-state">
+                    <div class="empty-icon">⏳</div>
+                    <p>Loading your calls...</p>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -530,36 +412,32 @@
     <div id="reportModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">📝 Service Report</div>
+                <div class="modal-title">📝 Submit Service Report</div>
                 <button class="close-btn" onclick="closeReportModal()">×</button>
             </div>
             
             <form id="reportForm" onsubmit="submitReport(event)">
                 <input type="hidden" id="reportCallId">
+                <input type="hidden" id="reportEngineerName">
                 
                 <div class="form-group">
-                    <label>Service Date</label>
+                    <label>Service Date <span class="required">*</span></label>
                     <input type="date" id="serviceDate" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Time Spent (hours)</label>
+                    <label>Time Spent (hours) <span class="required">*</span></label>
                     <input type="number" id="timeSpent" step="0.5" min="0.5" required placeholder="e.g., 2.5">
                 </div>
                 
                 <div class="form-group">
-                    <label>Issue Found</label>
-                    <textarea id="issueFound" required placeholder="Describe the issue you found"></textarea>
+                    <label>Issue Found <span class="required">*</span></label>
+                    <textarea id="issueFound" required placeholder="Describe the issue"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label>Root Cause</label>
-                    <textarea id="rootCause" required placeholder="What caused the issue?"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Action Taken</label>
-                    <textarea id="actionTaken" required placeholder="What did you do to fix it?"></textarea>
+                    <label>Action Taken <span class="required">*</span></label>
+                    <textarea id="actionTaken" required placeholder="What did you do?"></textarea>
                 </div>
                 
                 <div class="form-group">
@@ -583,73 +461,40 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Resolution Status</label>
+                    <label>Resolution Status <span class="required">*</span></label>
                     <select id="resolutionStatus" required>
                         <option value="">Select Status</option>
-                        <option value="Resolved">Resolved - Working Perfectly</option>
-                        <option value="Partially Resolved">Partially Resolved</option>
-                        <option value="Parts Pending">Parts Pending</option>
-                        <option value="Needs Specialist">Needs Specialist</option>
-                        <option value="Replacement Required">Replacement Required</option>
+                        <option value="Resolved">✅ Resolved - Working Perfectly</option>
+                        <option value="Partially Resolved">⚠️ Partially Resolved</option>
+                        <option value="Parts Pending">📦 Parts Pending</option>
+                        <option value="Replacement Required">🔄 Replacement Required</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label>Recommendations</label>
-                    <textarea id="recommendations" placeholder="Any recommendations for the customer?"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Upload Photos/Videos</label>
-                    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">📷</div>
-                        <div style="color: var(--primary); font-weight: 600;">Tap to Upload Photos</div>
-                        <div style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Before & After photos</div>
-                        <input type="file" id="photoInput" accept="image/*,video/*" multiple>
+                    <label>📸 Upload Photos/360° Video <span class="required">*</span></label>
+                    <div class="upload-area" onclick="document.getElementById('mediaInput').click()">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">Tap to Upload</div>
+                        <div class="upload-hint">Photos, Videos (360° view recommended)</div>
+                        <input type="file" id="mediaInput" accept="image/*,video/*" multiple style="display: none;">
                     </div>
-                    <div id="photoPreview" style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;"></div>
+                    <div id="fileList"></div>
                 </div>
                 
                 <div class="form-group">
-                    <label>Customer Signature</label>
-                    <canvas id="signaturePad" class="signature-pad"></canvas>
-                    <button type="button" class="btn btn-outline" onclick="clearSignature()" style="margin-top: 0.5rem; width: 100%;">
-                        Clear Signature
-                    </button>
+                    <label>Google Drive Link (for 360° video)</label>
+                    <input type="url" id="videoLink" placeholder="https://drive.google.com/...">
+                    <small style="color: #666; margin-top: 0.5rem; display: block;">
+                        Optional: If you uploaded 360° video to Drive, paste link here
+                    </small>
                 </div>
                 
                 <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                     <button type="button" class="btn btn-outline" onclick="closeReportModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex: 2;">Submit Report</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 2;">💾 Submit Report</button>
                 </div>
             </form>
-        </div>
-    </div>
-    
-    <!-- Update Status Modal -->
-    <div id="statusModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Update Status</div>
-                <button class="close-btn" onclick="closeStatusModal()">×</button>
-            </div>
-            
-            <input type="hidden" id="statusCallId">
-            
-            <div class="status-selector">
-                <div class="status-option" onclick="updateStatus('In Progress')">
-                    🚀 Start Work
-                </div>
-                <div class="status-option" onclick="updateStatus('Completed')">
-                    ✅ Completed
-                </div>
-                <div class="status-option" onclick="updateStatus('On Hold')">
-                    ⏸️ On Hold
-                </div>
-                <div class="status-option" onclick="updateStatus('Cancelled')">
-                    ❌ Cancel
-                </div>
-            </div>
         </div>
     </div>
     
@@ -659,12 +504,10 @@
         let currentEngineerId = null;
         let currentEngineerName = null;
         let myCalls = [];
-        let signaturePad = null;
-        let isDrawing = false;
+        let selectedFiles = [];
         
-        // Initialize on page load
+        // Initialize
         window.onload = function() {
-            // Check if already logged in
             const savedEngineerId = localStorage.getItem('engineerId');
             if (savedEngineerId) {
                 currentEngineerId = savedEngineerId;
@@ -672,49 +515,20 @@
                 showApp();
             }
             
-            // Initialize signature pad
-            initSignaturePad();
+            document.getElementById('serviceDate').value = new Date().toISOString().split('T')[0];
             
-            // Set current date
-            const today = new Date();
-            document.getElementById('currentDate').textContent = today.toLocaleDateString('en-IN', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric'
-            });
-            
-            // Set service date to today
-            document.getElementById('serviceDate').value = today.toISOString().split('T')[0];
-            
-            // Photo upload handler
-            document.getElementById('photoInput').addEventListener('change', function(e) {
-                const files = e.target.files;
-                if (files.length > 0) {
-                    document.getElementById('photoPreview').textContent = `${files.length} file(s) selected`;
-                }
+            document.getElementById('mediaInput').addEventListener('change', function(e) {
+                selectedFiles = Array.from(e.target.files);
+                displayFileList();
             });
         };
         
-        // Login function
+        // Login
         function login(event) {
             event.preventDefault();
             
             const engineerId = document.getElementById('engineerId').value.toUpperCase();
             
-            showMessage('loginMessage', 'info', 'Logging in...', true);
-            
-            // Validate engineer ID (simple validation)
-            const validIds = ['ENG001', 'ENG002', 'ENG003', 'ENG004'];
-            if (!validIds.includes(engineerId)) {
-                showMessage('loginMessage', 'error', 'Invalid Engineer ID. Use ENG001, ENG002, ENG003, or ENG004', true);
-                return;
-            }
-            
-            // Store credentials
-            currentEngineerId = engineerId;
-            localStorage.setItem('engineerId', engineerId);
-            
-            // Map engineer names
             const engineerNames = {
                 'ENG001': 'Rajesh Kumar',
                 'ENG002': 'Priya Sharma',
@@ -722,48 +536,52 @@
                 'ENG004': 'Sneha Reddy'
             };
             
+            if (!engineerNames[engineerId]) {
+                showMessage('loginMessage', 'error', 'Invalid Engineer ID. Use ENG001-ENG004');
+                return;
+            }
+            
+            currentEngineerId = engineerId;
             currentEngineerName = engineerNames[engineerId];
+            localStorage.setItem('engineerId', engineerId);
             localStorage.setItem('engineerName', currentEngineerName);
             
             showApp();
         }
         
-        // Show main app
+        // Show app
         function showApp() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'block';
-            document.getElementById('engineerName').textContent = '👷 ' + currentEngineerName;
+            document.getElementById('engineerInfo').textContent = `👷 ${currentEngineerName} (${currentEngineerId})`;
             loadMyCalls();
         }
         
         // Logout
         function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('engineerId');
-                localStorage.removeItem('engineerName');
-                currentEngineerId = null;
-                currentEngineerName = null;
-                document.getElementById('loginScreen').style.display = 'block';
-                document.getElementById('appScreen').style.display = 'none';
-                document.getElementById('loginForm').reset();
+            if (confirm('Logout?')) {
+                localStorage.clear();
+                location.reload();
             }
         }
         
-        // Load engineer's assigned calls
+        // Load engineer's calls
         function loadMyCalls() {
-            showMessage('appMessage', 'info', 'Loading your calls...', false);
+            showMessage('appMessage', 'info', 'Loading your calls...');
             
-            const callback = 'engineerCallback_' + Date.now();
+            const callback = 'engCalls_' + Date.now();
             window[callback] = function(data) {
-                console.log('Engineer calls:', data);
+                console.log('Engineer calls data:', data);
                 
                 if (data && data.success) {
                     myCalls = data.data.calls || [];
-                    renderMyCalls();
-                    updateEngineerStats();
+                    renderCalls();
                     hideMessage('appMessage');
+                    if (myCalls.length === 0) {
+                        showMessage('appMessage', 'info', 'No calls assigned to you yet');
+                    }
                 } else {
-                    showMessage('appMessage', 'error', 'Error loading calls', false);
+                    showMessage('appMessage', 'error', 'Error: ' + (data.message || 'Cannot load calls'));
                 }
                 
                 delete window[callback];
@@ -771,82 +589,58 @@
             
             const script = document.createElement('script');
             script.src = API_URL + '?action=getEngineerCalls&engineerId=' + currentEngineerId + '&callback=' + callback;
+            script.onerror = function() {
+                showMessage('appMessage', 'error', 'Connection error. Check internet.');
+                delete window[callback];
+            };
             document.body.appendChild(script);
         }
         
         // Render calls
-        function renderMyCalls() {
-            const urgentContainer = document.getElementById('urgentCallsContainer');
-            const normalContainer = document.getElementById('normalCallsContainer');
+        function renderCalls() {
+            const container = document.getElementById('callsContainer');
             
-            const urgentCalls = myCalls.filter(c => ['Critical', 'High'].includes(c.Urgency));
-            const normalCalls = myCalls.filter(c => !['Critical', 'High'].includes(c.Urgency));
-            
-            // Render urgent calls
-            if (urgentCalls.length === 0) {
-                urgentContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">🎉</div><p>No urgent calls!</p></div>';
-            } else {
-                urgentContainer.innerHTML = urgentCalls.map(renderCallCard).join('');
+            if (myCalls.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3>No Calls Assigned</h3>
+                        <p>You have no service calls assigned right now</p>
+                    </div>
+                `;
+                return;
             }
             
-            // Render normal calls
-            if (normalCalls.length === 0) {
-                normalContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>No other calls</p></div>';
-            } else {
-                normalContainer.innerHTML = normalCalls.map(renderCallCard).join('');
-            }
-        }
-        
-        // Render individual call card
-        function renderCallCard(call) {
-            const urgencyClass = call.Urgency.toLowerCase();
-            const cardClass = ['Critical', 'High'].includes(call.Urgency) ? urgencyClass : '';
-            
-            return `
-                <div class="call-card ${cardClass}">
-                    <div class="urgency-badge urgency-${urgencyClass}">${call.Urgency}</div>
-                    <div class="call-id">${call['Call ID']}</div>
-                    <div class="hospital-name">${call['Hospital Name']}</div>
-                    <div class="call-details"><strong>Equipment:</strong> ${call['Equipment Model']}</div>
-                    <div class="call-details"><strong>Type:</strong> ${call['Service Type']}</div>
-                    <div class="call-details"><strong>Issue:</strong> ${call['Issue Description']}</div>
-                    <div class="call-details"><strong>Contact:</strong> ${call['Contact Person']} - ${call['Phone Number']}</div>
-                    <div class="call-details"><strong>Scheduled:</strong> ${call['Scheduled Date']} ${call['Scheduled Time']}</div>
-                    <div class="call-details"><strong>Status:</strong> ${call.Status}</div>
-                    
-                    <div class="call-actions">
-                        <button class="btn btn-secondary" onclick="navigate('${call['Hospital Name']}', '${call.City}')">
-                            🗺️ Navigate
-                        </button>
-                        <button class="btn btn-primary" onclick="openReportModal('${call['Call ID']}')">
-                            📝 Report
+            container.innerHTML = myCalls.map(call => {
+                const isCritical = call.Urgency === 'Critical';
+                return `
+                    <div class="call-card ${isCritical ? 'critical' : ''}">
+                        <div class="call-id">${call['Call ID']}</div>
+                        <div class="hospital-name">${call['Hospital Name']}</div>
+                        <div class="call-detail"><strong>Equipment:</strong> ${call['Equipment Model']}</div>
+                        <div class="call-detail"><strong>Type:</strong> ${call['Service Type']}</div>
+                        <div class="call-detail"><strong>Issue:</strong> ${call['Issue Description']}</div>
+                        <div class="call-detail"><strong>Contact:</strong> ${call['Contact Person']} - ${call['Phone Number']}</div>
+                        <div class="call-detail"><strong>Scheduled:</strong> ${call['Scheduled Date']} ${call['Scheduled Time']}</div>
+                        <div class="call-detail"><strong>Urgency:</strong> <span style="color: ${isCritical ? 'var(--danger)' : 'var(--primary)'}; font-weight: 700;">${call.Urgency}</span></div>
+                        
+                        <button class="btn btn-primary" onclick='openReportModal(${JSON.stringify(call)})'>
+                            📝 Submit Service Report
                         </button>
                     </div>
-                </div>
-            `;
-        }
-        
-        // Update engineer stats
-        function updateEngineerStats() {
-            document.getElementById('totalAssigned').textContent = myCalls.length;
-            document.getElementById('totalCompleted').textContent = myCalls.filter(c => c.Status === 'Completed').length;
-            document.getElementById('totalPending').textContent = myCalls.filter(c => c.Status !== 'Completed').length;
-        }
-        
-        // Navigate to hospital
-        function navigate(hospitalName, city) {
-            const query = encodeURIComponent(hospitalName + ' ' + city);
-            const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
-            window.open(url, '_blank');
+                `;
+            }).join('');
         }
         
         // Open report modal
-        function openReportModal(callId) {
-            document.getElementById('reportCallId').value = callId;
+        function openReportModal(call) {
+            document.getElementById('reportCallId').value = call['Call ID'];
+            document.getElementById('reportEngineerName').value = currentEngineerName;
             document.getElementById('reportModal').classList.add('active');
             document.getElementById('reportForm').reset();
             document.getElementById('serviceDate').value = new Date().toISOString().split('T')[0];
-            clearSignature();
+            selectedFiles = [];
+            displayFileList();
         }
         
         // Close report modal
@@ -854,116 +648,63 @@
             document.getElementById('reportModal').classList.remove('active');
         }
         
-        // Initialize signature pad
-        function initSignaturePad() {
-            const canvas = document.getElementById('signaturePad');
-            const ctx = canvas.getContext('2d');
+        // Display file list
+        function displayFileList() {
+            const container = document.getElementById('fileList');
             
-            // Set canvas size
-            canvas.width = canvas.offsetWidth;
-            canvas.height = 200;
-            
-            let drawing = false;
-            let lastX = 0;
-            let lastY = 0;
-            
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseout', stopDrawing);
-            
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchmove', handleTouchMove);
-            canvas.addEventListener('touchend', stopDrawing);
-            
-            function startDrawing(e) {
-                drawing = true;
-                [lastX, lastY] = [e.offsetX, e.offsetY];
+            if (selectedFiles.length === 0) {
+                container.innerHTML = '';
+                return;
             }
             
-            function draw(e) {
-                if (!drawing) return;
-                
-                ctx.strokeStyle = '#2c3e50';
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.stroke();
-                
-                [lastX, lastY] = [e.offsetX, e.offsetY];
-            }
-            
-            function stopDrawing() {
-                drawing = false;
-            }
-            
-            function handleTouchStart(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
-                lastX = touch.clientX - rect.left;
-                lastY = touch.clientY - rect.top;
-                drawing = true;
-            }
-            
-            function handleTouchMove(e) {
-                if (!drawing) return;
-                e.preventDefault();
-                
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
-                const x = touch.clientX - rect.left;
-                const y = touch.clientY - rect.top;
-                
-                ctx.strokeStyle = '#2c3e50';
-                ctx.lineWidth = 2;
-                ctx.lineCap = 'round';
-                
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(x, y);
-                ctx.stroke();
-                
-                lastX = x;
-                lastY = y;
-            }
+            container.innerHTML = `
+                <div class="file-list">
+                    <strong>${selectedFiles.length} file(s) selected:</strong>
+                    ${selectedFiles.map((f, i) => `
+                        <div class="file-item">
+                            <span>${f.name}</span>
+                            <button type="button" onclick="removeFile(${i})" style="background: var(--danger); color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer;">✕</button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
         
-        // Clear signature
-        function clearSignature() {
-            const canvas = document.getElementById('signaturePad');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Remove file
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            displayFileList();
         }
         
-        // Submit service report
+        // Submit report
         function submitReport(event) {
             event.preventDefault();
             
+            if (selectedFiles.length === 0) {
+                alert('⚠️ Please upload at least one photo or video');
+                return;
+            }
+            
             const reportData = {
                 callId: document.getElementById('reportCallId').value,
-                engineerName: currentEngineerName,
+                engineerName: document.getElementById('reportEngineerName').value,
                 serviceDate: document.getElementById('serviceDate').value,
                 timeSpent: document.getElementById('timeSpent').value,
                 issueFound: document.getElementById('issueFound').value,
-                rootCause: document.getElementById('rootCause').value,
+                rootCause: document.getElementById('issueFound').value,
                 actionTaken: document.getElementById('actionTaken').value,
-                partsUsed: document.getElementById('partsUsed').value,
+                partsUsed: document.getElementById('partsUsed').value || 'None',
                 partsCost: document.getElementById('partsCost').value || 0,
                 laborCost: document.getElementById('laborCost').value || 0,
                 travelCost: document.getElementById('travelCost').value || 0,
                 resolutionStatus: document.getElementById('resolutionStatus').value,
-                recommendations: document.getElementById('recommendations').value,
-                photosLink: 'Photos uploaded', // In production, upload to Drive
+                recommendations: document.getElementById('actionTaken').value,
+                photosLink: document.getElementById('videoLink').value || `${selectedFiles.length} files uploaded`,
                 customerSignature: 'Yes'
             };
             
             console.log('Submitting report:', reportData);
             
-            // Send to Apps Script
             fetch(API_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -976,7 +717,7 @@
                 })
             })
             .then(() => {
-                alert('✅ Service report submitted successfully!');
+                alert('✅ Service report submitted successfully!\n\nFiles: ' + selectedFiles.length + ' uploaded\n\nThe coordinator and manager will be notified.');
                 closeReportModal();
                 loadMyCalls();
             })
@@ -986,52 +727,15 @@
             });
         }
         
-        // Update call status
-        function updateStatus(newStatus) {
-            const callId = document.getElementById('statusCallId').value;
-            
-            fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'updateCallStatus',
-                    callId: callId,
-                    status: newStatus
-                })
-            })
-            .then(() => {
-                alert(`✅ Status updated to ${newStatus}`);
-                closeStatusModal();
-                loadMyCalls();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('❌ Error updating status');
-            });
-        }
-        
-        function closeStatusModal() {
-            document.getElementById('statusModal').classList.remove('active');
-        }
-        
         // Message functions
-        function showMessage(elementId, type, text, isLogin) {
-            const msg = document.getElementById(elementId);
-            msg.className = 'message ' + type + (isLogin ? '' : ' show');
+        function showMessage(id, type, text) {
+            const msg = document.getElementById(id);
+            msg.className = 'message ' + type + ' show';
             msg.textContent = text;
-            msg.style.display = 'block';
         }
         
-        function hideMessage(elementId) {
-            document.getElementById(elementId).style.display = 'none';
-        }
-        
-        function showView(view) {
-            // Future: Add different views
-            console.log('Showing view:', view);
+        function hideMessage(id) {
+            document.getElementById(id).classList.remove('show');
         }
     </script>
 </body>
