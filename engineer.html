@@ -254,9 +254,16 @@
                 if (data.success) {
                     allCalls = (data.data.calls || []).filter(c => c['Assigned Engineer'] === engineer);
                     
-                    // Split into active and completed
-                    activeCalls = allCalls.filter(c => c.Status !== 'Completed');
-                    completedCalls = allCalls.filter(c => c.Status === 'Completed');
+                    // Split into active and completed (case-insensitive and trim spaces)
+                    activeCalls = allCalls.filter(c => {
+                        const status = (c.Status || '').toString().trim().toLowerCase();
+                        return status !== 'completed' && status !== 'cancelled' && status !== 'closed';
+                    });
+                    
+                    completedCalls = allCalls.filter(c => {
+                        const status = (c.Status || '').toString().trim().toLowerCase();
+                        return status === 'completed' || status === 'cancelled' || status === 'closed';
+                    });
                     
                     updateStats();
                     renderCalls();
