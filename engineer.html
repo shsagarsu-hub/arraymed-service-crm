@@ -305,6 +305,9 @@
             const urgencyClass = (call.Urgency || 'Normal').toLowerCase();
             const cardClass = call.Urgency === 'Critical' ? 'critical' : '';
             
+            // Debug log
+            console.log(`Rendering ${call['Call ID']}: Status="${call.Status}", isCompleted=${isCompleted}`);
+            
             return `
                 <div class="call-card ${cardClass} ${isCompleted ? 'completed' : ''}">
                     ${!isCompleted ? `<div class="urgency-badge urgency-${urgencyClass}">${call.Urgency || 'Normal'}</div>` : ''}
@@ -315,7 +318,8 @@
                     <div class="details"><strong>Issue:</strong> ${call['Issue Description']}</div>
                     <div class="details"><strong>Contact:</strong> ${call['Contact Person']} - ${call['Phone Number']}</div>
                     <div class="details"><strong>Scheduled:</strong> ${call['Scheduled Date']} ${call['Scheduled Time']}</div>
-                    ${isCompleted ? `<div class="status-badge status-completed">✅ Completed</div>` : ''}
+                    <div class="details"><strong>Current Status:</strong> ${call.Status}</div>
+                    ${isCompleted ? `<div class="status-badge status-completed">✅ Completed</div>` : `<div class="details" style="color: #f39c12; font-weight: 600;">⏳ Status: ${call.Status}</div>`}
                     
                     ${!isCompleted ? `
                         <button class="btn btn-secondary btn-small" onclick="navigate('${call['Hospital Name']}', '${call.City}')">
