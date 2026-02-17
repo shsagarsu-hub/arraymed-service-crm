@@ -11,9 +11,8 @@
         body { font-family: 'Inter', sans-serif; background: #f8f9fa; }
         .header { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header h1 { font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 800; }
-        .btn-new { background: var(--green); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; }
-        .btn-new:hover { background: #27ae60; }
-        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding: 1.5rem 2rem; }
+        .btn-new { background: var(--green); color: white; border: none; padding: 0.6rem 1.4rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; }
+        .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; padding: 1.5rem 2rem; }
         .stat-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid var(--primary); }
         .stat-card.green { border-top-color: var(--green); }
         .stat-card.red { border-top-color: var(--red); }
@@ -24,74 +23,84 @@
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
         .section-title { font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 700; }
         .btn-refresh { background: white; border: 2px solid var(--primary); color: var(--primary); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
-        .table-wrap { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f8f9fa; padding: 0.85rem 1rem; text-align: left; font-size: 0.8rem; font-weight: 700; color: #7f8c8d; text-transform: uppercase; border-bottom: 2px solid var(--light); }
-        td { padding: 0.85rem 1rem; font-size: 0.9rem; border-bottom: 1px solid #f0f0f0; }
-        tr:hover td { background: #f8f9fa; }
-        tr.critical td { background: #fff5f5; }
-        .badge { padding: 0.3rem 0.7rem; border-radius: 15px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+        .table-wrap { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background: #f8f9fa; padding: 0.85rem 1rem; text-align: left; font-size: 0.78rem; font-weight: 700; color: #7f8c8d; text-transform: uppercase; border-bottom: 2px solid var(--light); }
+        td { padding: 0.85rem 1rem; font-size: 0.88rem; border-bottom: 1px solid #f0f0f0; }
+        tr:hover td { background: #fafafa; }
+        tr.critical td { background: #fff8f8; }
+        .badge { padding: 0.28rem 0.65rem; border-radius: 15px; font-size: 0.72rem; font-weight: 700; display: inline-block; white-space: nowrap; }
         .badge-critical { background: #ffebee; color: #c62828; }
         .badge-high { background: #fff3e0; color: #f57c00; }
         .badge-normal { background: #e3f2fd; color: #1976d2; }
         .badge-low { background: #f3e5f5; color: #7b1fa2; }
-        .badge-assigned { background: #fff3e0; color: #f57c00; }
+        .badge-assigned { background: #fff3e0; color: #e65100; }
         .badge-inprogress { background: #e3f2fd; color: #1565c0; }
         .badge-completed { background: #e8f5e9; color: #2e7d32; }
+        .badge-onhold { background: #fce4ec; color: #880e4f; }
         .badge-inwarranty { background: #e8f5e9; color: #2e7d32; }
         .badge-outofwarranty { background: #ffebee; color: #c62828; }
-        .btn-update { background: var(--primary); color: white; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .badge-tobechecked { background: #f5f5f5; color: #616161; }
+        .badge-amc { background: #e8eaf6; color: #3949ab; }
+        .btn-update { background: var(--primary); color: white; border: none; padding: 0.35rem 0.7rem; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; }
         .empty-state { text-align: center; padding: 3rem; color: #95a5a6; }
-        .message { padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; display: none; border-left: 4px solid; }
-        .message.show { display: block; }
-        .message.success { background: #e8f5e9; color: #2e7d32; border-color: #4caf50; }
-        .message.error { background: #ffebee; color: #c62828; border-color: #f44336; }
-        .message.info { background: #e3f2fd; color: #1565c0; border-color: #2196f3; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; overflow-y: auto; }
-        .modal.active { display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
-        .modal-box { background: white; border-radius: 16px; width: 100%; max-width: 700px; }
-        .modal-head { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; }
-        .modal-head h2 { font-family: 'Poppins', sans-serif; font-size: 1.3rem; font-weight: 700; }
-        .modal-close { background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
-        .modal-body { padding: 1.5rem; max-height: 75vh; overflow-y: auto; }
-        .form-section { margin-bottom: 1.5rem; }
-        .form-section-title { font-family: 'Poppins', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--light); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
-        .form-grid.full { grid-template-columns: 1fr; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--dark); }
-        .form-group input, .form-group select, .form-group textarea { padding: 0.7rem; border: 2px solid var(--light); border-radius: 8px; font-size: 0.9rem; font-family: 'Inter', sans-serif; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .required { color: var(--red); }
+        .msg { padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; display: none; border-left: 4px solid; font-weight: 500; }
+        .msg.show { display: block; }
+        .msg.success { background: #e8f5e9; color: #2e7d32; border-color: #4caf50; }
+        .msg.error { background: #ffebee; color: #c62828; border-color: #f44336; }
+        .msg.info { background: #e3f2fd; color: #1565c0; border-color: #2196f3; }
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 1000; overflow-y: auto; padding: 1.5rem 1rem; }
+        .modal.active { display: flex; align-items: flex-start; justify-content: center; }
+        .modal-box { background: white; border-radius: 16px; width: 100%; max-width: 720px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .modal-head { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; }
+        .modal-head h2 { font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 700; }
+        .modal-close { background: rgba(255,255,255,0.2); border: none; color: white; width: 34px; height: 34px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; }
+        .modal-body { padding: 1.5rem; max-height: 78vh; overflow-y: auto; }
+        .fsection { margin-bottom: 1.5rem; }
+        .fsection-title { font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--light); display: flex; align-items: center; gap: 0.5rem; }
+        .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .fgrid.three { grid-template-columns: 1fr 1fr 1fr; }
+        .fgrid.full { grid-template-columns: 1fr; margin-top: 1rem; }
+        .fg { display: flex; flex-direction: column; }
+        .fg label { font-weight: 600; font-size: 0.83rem; margin-bottom: 0.4rem; color: var(--dark); }
+        .fg input, .fg select, .fg textarea { padding: 0.65rem 0.75rem; border: 2px solid var(--light); border-radius: 8px; font-size: 0.88rem; font-family: 'Inter', sans-serif; transition: border 0.2s; background: white; }
+        .fg input:focus, .fg select:focus, .fg textarea:focus { outline: none; border-color: var(--primary); }
+        .fg textarea { min-height: 80px; resize: vertical; }
+        .fg input[readonly] { background: #f8f9fa; color: #555; cursor: default; }
+        .req { color: var(--red); }
+        .autofill-note { font-size: 0.75rem; color: #27ae60; margin-top: 0.25rem; font-style: italic; }
         .modal-footer { padding: 1rem 1.5rem; background: #f8f9fa; border-top: 2px solid var(--light); display: flex; gap: 1rem; justify-content: flex-end; border-radius: 0 0 16px 16px; }
-        .btn-cancel { background: white; border: 2px solid var(--light); color: #7f8c8d; padding: 0.7rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .btn-submit { background: var(--green); color: white; border: none; padding: 0.7rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem; }
+        .btn-cancel { background: white; border: 2px solid var(--light); color: #7f8c8d; padding: 0.65rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-submit { background: var(--green); color: white; border: none; padding: 0.65rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.95rem; }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
         .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 1rem 0; }
-        .status-opt { padding: 1rem; border: 2px solid var(--light); border-radius: 8px; text-align: center; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .status-opt { padding: 1rem; border: 2px solid var(--light); border-radius: 8px; text-align: center; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .status-opt:hover { border-color: var(--primary); background: #e3f2fd; color: var(--primary); }
-        @media (max-width: 768px) {
-            .stats { grid-template-columns: 1fr 1fr; }
-            .form-grid, .form-grid.three { grid-template-columns: 1fr; }
-            .header { flex-direction: column; gap: 1rem; }
-            .main, .stats { padding: 1rem; }
-        }
+        .loading-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #ccc; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 6px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media(max-width:768px) { .stats { grid-template-columns: 1fr 1fr; } .fgrid,.fgrid.three { grid-template-columns: 1fr; } .header { flex-direction: column; gap: 1rem; } .main,.stats { padding: 1rem; } }
     </style>
 </head>
 <body>
+
+<!-- HEADER -->
 <div class="header">
     <h1>🛠️ ArrayMed Service CRM</h1>
     <button class="btn-new" onclick="openNewCallModal()">➕ New Service Call</button>
 </div>
+
+<!-- STATS -->
 <div class="stats">
     <div class="stat-card"><div class="stat-value" id="statToday">—</div><div class="stat-label">📅 Today's Calls</div></div>
     <div class="stat-card green"><div class="stat-value" id="statCompleted">—</div><div class="stat-label">✅ Completed Today</div></div>
     <div class="stat-card orange"><div class="stat-value" id="statPending">—</div><div class="stat-label">⏳ Pending Calls</div></div>
     <div class="stat-card red"><div class="stat-value" id="statCritical">—</div><div class="stat-label">🚨 Critical Issues</div></div>
 </div>
+
+<!-- TABLE -->
 <div class="main">
-    <div id="tableMessage" class="message"></div>
+    <div id="tableMsg" class="msg"></div>
     <div class="section-header">
         <div class="section-title">📋 Active Service Calls</div>
         <button class="btn-refresh" onclick="loadCalls()">🔄 Refresh</button>
@@ -105,14 +114,12 @@
                     <th>Warranty</th><th>Status</th><th>Action</th>
                 </tr>
             </thead>
-            <tbody id="callsTableBody">
-                <tr><td colspan="10" class="empty-state">Loading calls...</td></tr>
-            </tbody>
+            <tbody id="callsBody"><tr><td colspan="10" class="empty-state">⏳ Loading calls...</td></tr></tbody>
         </table>
     </div>
 </div>
 
-<!-- NEW CALL MODAL -->
+<!-- NEW SERVICE CALL MODAL -->
 <div id="newCallModal" class="modal">
     <div class="modal-box">
         <div class="modal-head">
@@ -120,59 +127,126 @@
             <button class="modal-close" onclick="closeNewCallModal()">✕</button>
         </div>
         <div class="modal-body">
-            <div id="formMessage" class="message"></div>
-            <form id="newCallForm">
-                <div class="form-section">
-                    <div class="form-section-title">🏥 Hospital Information</div>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Hospital Name <span class="required">*</span></label><input type="text" id="hospitalName" placeholder="e.g. Apollo Hospital Bangalore" required></div>
-                        <div class="form-group"><label>Contact Person <span class="required">*</span></label><input type="text" id="contactPerson" placeholder="e.g. Dr. Ramesh Kumar" required></div>
-                        <div class="form-group"><label>Phone Number <span class="required">*</span></label><input type="tel" id="phoneNumber" placeholder="10-digit mobile" maxlength="10" required></div>
-                        <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="contact@hospital.com"></div>
-                        <div class="form-group"><label>City <span class="required">*</span></label>
-                            <select id="city" required><option value="">Select City</option><option>Bangalore</option><option>Mumbai</option><option>Delhi</option><option>Chennai</option><option>Hyderabad</option><option>Pune</option><option>Kolkata</option><option>Other</option></select>
-                        </div>
-                        <div class="form-group"><label>State <span class="required">*</span></label>
-                            <select id="state" required><option value="">Select State</option><option>Karnataka</option><option>Maharashtra</option><option>Delhi</option><option>Tamil Nadu</option><option>Telangana</option><option>Gujarat</option><option>West Bengal</option><option>Other</option></select>
-                        </div>
+            <div id="formMsg" class="msg"></div>
+
+            <!-- HOSPITAL -->
+            <div class="fsection">
+                <div class="fsection-title">🏥 Hospital Information</div>
+                <div class="fgrid full">
+                    <div class="fg">
+                        <label>Hospital Name <span class="req">*</span></label>
+                        <select id="hospitalName" onchange="autoFillHospital()" required>
+                            <option value="">⏳ Loading from sheet...</option>
+                        </select>
+                        <span class="autofill-note" id="hospitalNote"></span>
                     </div>
                 </div>
-                <div class="form-section">
-                    <div class="form-section-title">🔧 Equipment Details</div>
-                    <div class="form-grid three">
-                        <div class="form-group"><label>Equipment Model <span class="required">*</span></label><input type="text" id="model" placeholder="e.g. Fresenius FP950" required></div>
-                        <div class="form-group"><label>Serial Number</label><input type="text" id="serialNumber" placeholder="e.g. FP950-2024-001"></div>
-                        <div class="form-group"><label>Warranty Status</label>
-                            <select id="warrantyStatus"><option value="To Be Checked">To Be Checked</option><option value="In Warranty">In Warranty</option><option value="Out of Warranty">Out of Warranty</option><option value="AMC">AMC</option></select>
-                        </div>
+                <div class="fgrid" style="margin-top:1rem;">
+                    <div class="fg">
+                        <label>Contact Person <span class="req">*</span></label>
+                        <input type="text" id="contactPerson" placeholder="Auto-filled from sheet" required>
+                    </div>
+                    <div class="fg">
+                        <label>Phone Number <span class="req">*</span></label>
+                        <input type="tel" id="phoneNumber" placeholder="Auto-filled from sheet" maxlength="10" required>
+                    </div>
+                    <div class="fg">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="Auto-filled from sheet">
+                    </div>
+                    <div class="fg">
+                        <label>City</label>
+                        <input type="text" id="city" placeholder="Auto-filled from sheet" readonly>
                     </div>
                 </div>
-                <div class="form-section">
-                    <div class="form-section-title">📋 Service Request</div>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Service Type <span class="required">*</span></label>
-                            <select id="serviceType" required><option value="">Select Type</option><option>Repair</option><option>Installation</option><option>PMC</option><option>Calibration</option><option>Training</option><option>Demo</option><option>Warranty Claim</option></select>
-                        </div>
-                        <div class="form-group"><label>Urgency <span class="required">*</span></label>
-                            <select id="urgency" required><option value="">Select Urgency</option><option value="Critical">🚨 Critical - Equipment Down</option><option value="High">⚠️ High - Affecting Patient Care</option><option value="Normal">📋 Normal - Scheduled Service</option><option value="Low">ℹ️ Low - Minor Issue</option></select>
-                        </div>
-                        <div class="form-group"><label>Scheduled Date <span class="required">*</span></label><input type="date" id="scheduledDate" required></div>
-                        <div class="form-group"><label>Scheduled Time <span class="required">*</span></label><input type="time" id="scheduledTime" required></div>
+            </div>
+
+            <!-- EQUIPMENT -->
+            <div class="fsection">
+                <div class="fsection-title">🔧 Equipment Details</div>
+                <div class="fgrid three">
+                    <div class="fg">
+                        <label>Equipment Model <span class="req">*</span></label>
+                        <select id="model" onchange="autoFillEquipment()" required>
+                            <option value="">⏳ Loading from sheet...</option>
+                        </select>
                     </div>
-                    <div class="form-grid full" style="margin-top:1rem;">
-                        <div class="form-group"><label>Issue Description <span class="required">*</span></label><textarea id="issueDescription" placeholder="Describe the issue in detail..." required></textarea></div>
+                    <div class="fg">
+                        <label>Serial Number</label>
+                        <input type="text" id="serialNumber" placeholder="e.g. FP950-2024-001">
+                    </div>
+                    <div class="fg">
+                        <label>Warranty Status</label>
+                        <select id="warrantyStatus">
+                            <option value="To Be Checked">To Be Checked</option>
+                            <option value="In Warranty">In Warranty</option>
+                            <option value="Out of Warranty">Out of Warranty</option>
+                            <option value="AMC">AMC</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-section">
-                    <div class="form-section-title">👷 Assign Engineer</div>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Assign To <span class="required">*</span></label>
-                            <select id="assignedEngineer" required><option value="">Select Engineer</option><option value="Rajesh Kumar">Rajesh Kumar</option><option value="Priya Sharma">Priya Sharma</option><option value="Amit Patel">Amit Patel</option><option value="Sneha Reddy">Sneha Reddy</option></select>
-                        </div>
-                        <div class="form-group"><label>Estimated Duration (hours)</label><input type="number" id="estDuration" placeholder="e.g. 3" min="0.5" step="0.5"></div>
+            </div>
+
+            <!-- SERVICE REQUEST -->
+            <div class="fsection">
+                <div class="fsection-title">📋 Service Request</div>
+                <div class="fgrid">
+                    <div class="fg">
+                        <label>Service Type <span class="req">*</span></label>
+                        <select id="serviceType" required>
+                            <option value="">Select Type</option>
+                            <option>Repair</option>
+                            <option>Installation</option>
+                            <option>PMC</option>
+                            <option>Calibration</option>
+                            <option>Training</option>
+                            <option>Demo</option>
+                            <option>Warranty Claim</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label>Urgency <span class="req">*</span></label>
+                        <select id="urgency" required>
+                            <option value="">Select Urgency</option>
+                            <option value="Critical">🚨 Critical - Equipment Down</option>
+                            <option value="High">⚠️ High - Affecting Patient Care</option>
+                            <option value="Normal">📋 Normal - Scheduled Service</option>
+                            <option value="Low">ℹ️ Low - Minor Issue</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label>Scheduled Date <span class="req">*</span></label>
+                        <input type="date" id="scheduledDate" required>
+                    </div>
+                    <div class="fg">
+                        <label>Scheduled Time <span class="req">*</span></label>
+                        <input type="time" id="scheduledTime" required>
                     </div>
                 </div>
-            </form>
+                <div class="fgrid full">
+                    <div class="fg">
+                        <label>Issue Description <span class="req">*</span></label>
+                        <textarea id="issueDescription" placeholder="Describe the issue in detail..." required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ENGINEER -->
+            <div class="fsection">
+                <div class="fsection-title">👷 Assign Engineer</div>
+                <div class="fgrid">
+                    <div class="fg">
+                        <label>Assign To <span class="req">*</span></label>
+                        <select id="assignedEngineer" required>
+                            <option value="">⏳ Loading from sheet...</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label>Estimated Duration (hours)</label>
+                        <input type="number" id="estDuration" placeholder="e.g. 3" min="0.5" step="0.5">
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeNewCallModal()">Cancel</button>
@@ -181,13 +255,13 @@
     </div>
 </div>
 
-<!-- STATUS MODAL -->
+<!-- STATUS UPDATE MODAL -->
 <div id="statusModal" class="modal">
-    <div class="modal-box" style="max-width:400px;">
-        <div class="modal-head"><h2>Update Status</h2><button class="modal-close" onclick="closeStatusModal()">✕</button></div>
+    <div class="modal-box" style="max-width:420px;">
+        <div class="modal-head"><h2>✏️ Update Status</h2><button class="modal-close" onclick="closeStatusModal()">✕</button></div>
         <div class="modal-body">
             <input type="hidden" id="statusCallId">
-            <p style="margin-bottom:1rem;color:#666;">Update: <strong id="statusCallLabel"></strong></p>
+            <p style="margin-bottom:1rem;color:#555;">Updating: <strong id="statusCallLabel" style="color:var(--primary);"></strong></p>
             <div class="status-grid">
                 <div class="status-opt" onclick="setStatus('In Progress')">🚀 In Progress</div>
                 <div class="status-opt" onclick="setStatus('Completed')">✅ Completed</div>
@@ -199,165 +273,349 @@
 </div>
 
 <script>
-    const API = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
+const API = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
 
-    function loadCalls() {
-        showMsg('tableMessage','info','Loading calls...');
-        const cb = 'c_' + Date.now();
-        window[cb] = function(data) {
-            if (data.success) {
-                renderTable(data.data.calls || []);
-                loadStats();
-                hideMsg('tableMessage');
-            } else {
-                showMsg('tableMessage','error','Error loading. Please refresh.');
-            }
-            delete window[cb];
-        };
-        const s = document.createElement('script');
-        s.src = API + '?action=getActiveCalls&callback=' + cb;
-        document.body.appendChild(s);
+// Store all data from sheet
+let hospitalsData = [];
+let engineersData = [];
+let equipmentData = [];
+
+// ─────────────────────────────────────────────
+// LOAD ALL SHEET DATA ON STARTUP
+// ─────────────────────────────────────────────
+function loadFormData() {
+    const cb = 'fd_' + Date.now();
+    window[cb] = function(res) {
+        if (res.success) {
+            hospitalsData  = res.data.hospitals  || [];
+            engineersData  = res.data.engineers  || [];
+            equipmentData  = res.data.equipment  || [];
+
+            populateHospitalDropdown();
+            populateEngineerDropdown();
+            populateEquipmentDropdown();
+        } else {
+            showMsg('formMsg','error','Could not load sheet data: ' + res.message);
+        }
+        delete window[cb];
+    };
+    const s = document.createElement('script');
+    s.src = API + '?action=getFormData&callback=' + cb;
+    document.body.appendChild(s);
+}
+
+function populateHospitalDropdown() {
+    const sel = document.getElementById('hospitalName');
+    sel.innerHTML = '<option value="">— Select Hospital —</option>';
+    hospitalsData.forEach(h => {
+        const opt = document.createElement('option');
+        opt.value = h.name;
+        opt.textContent = h.name + (h.city ? '  (' + h.city + ')' : '');
+        sel.appendChild(opt);
+    });
+    // Add "New Hospital" option at end
+    const newOpt = document.createElement('option');
+    newOpt.value = '__new__';
+    newOpt.textContent = '➕ New Hospital (type manually)';
+    sel.appendChild(newOpt);
+}
+
+function populateEngineerDropdown() {
+    const sel = document.getElementById('assignedEngineer');
+    sel.innerHTML = '<option value="">— Select Engineer —</option>';
+    engineersData.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.name;
+        opt.textContent = e.name + (e.city ? '  (' + e.city + ')' : '');
+        sel.appendChild(opt);
+    });
+}
+
+function populateEquipmentDropdown() {
+    const sel = document.getElementById('model');
+    sel.innerHTML = '<option value="">— Select Equipment —</option>';
+    equipmentData.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.model;
+        opt.textContent = e.model + (e.category ? '  [' + e.category + ']' : '');
+        sel.appendChild(opt);
+    });
+    // Add manual option
+    const newOpt = document.createElement('option');
+    newOpt.value = '__new__';
+    newOpt.textContent = '➕ Other (type manually)';
+    sel.appendChild(newOpt);
+}
+
+// Auto-fill hospital details when hospital selected
+function autoFillHospital() {
+    const selectedName = document.getElementById('hospitalName').value;
+
+    if (selectedName === '__new__') {
+        // Clear fields and make editable
+        document.getElementById('hospitalName').outerHTML = document.getElementById('hospitalName').outerHTML; // keep as select
+        document.getElementById('contactPerson').value = '';
+        document.getElementById('contactPerson').removeAttribute('readonly');
+        document.getElementById('phoneNumber').value = '';
+        document.getElementById('phoneNumber').removeAttribute('readonly');
+        document.getElementById('email').value = '';
+        document.getElementById('city').value = '';
+        document.getElementById('city').removeAttribute('readonly');
+        document.getElementById('hospitalNote').textContent = 'Enter hospital details manually';
+        return;
     }
 
-    function loadStats() {
-        const cb = 's_' + Date.now();
-        window[cb] = function(data) {
-            if (data.success) {
-                const s = data.data.stats;
-                document.getElementById('statToday').textContent = s.todayCalls || 0;
-                document.getElementById('statCompleted').textContent = s.completedToday || 0;
-                document.getElementById('statPending').textContent = s.pendingCalls || 0;
-                document.getElementById('statCritical').textContent = s.criticalCalls || 0;
-            }
-            delete window[cb];
-        };
-        const s = document.createElement('script');
-        s.src = API + '?action=getDashboardStats&callback=' + cb;
-        document.body.appendChild(s);
+    const hospital = hospitalsData.find(h => h.name === selectedName);
+    if (hospital) {
+        document.getElementById('contactPerson').value = hospital.contactPerson || '';
+        document.getElementById('phoneNumber').value   = hospital.phone || '';
+        document.getElementById('email').value         = hospital.email || '';
+        document.getElementById('city').value          = hospital.city  || '';
+        document.getElementById('hospitalNote').textContent = '✅ Details auto-filled from sheet';
+        setTimeout(() => document.getElementById('hospitalNote').textContent = '', 3000);
     }
+}
 
-    function renderTable(calls) {
-        const tbody = document.getElementById('callsTableBody');
-        if (!calls.length) {
-            tbody.innerHTML = '<tr><td colspan="10" class="empty-state">📋 No active service calls. Click "+ New Service Call" to add one.</td></tr>';
+// Auto-fill equipment category when equipment selected
+function autoFillEquipment() {
+    const selectedModel = document.getElementById('model').value;
+
+    if (selectedModel === '__new__') {
+        // Replace with text input
+        const sel = document.getElementById('model');
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.id = 'model';
+        inp.placeholder = 'Type equipment model name';
+        inp.required = true;
+        sel.parentNode.replaceChild(inp, sel);
+        return;
+    }
+}
+
+// ─────────────────────────────────────────────
+// OPEN / CLOSE NEW CALL MODAL
+// ─────────────────────────────────────────────
+function openNewCallModal() {
+    document.getElementById('newCallModal').classList.add('active');
+
+    // Reset form
+    document.getElementById('contactPerson').value = '';
+    document.getElementById('phoneNumber').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('city').value = '';
+    document.getElementById('serialNumber').value = '';
+    document.getElementById('warrantyStatus').value = 'To Be Checked';
+    document.getElementById('serviceType').value = '';
+    document.getElementById('urgency').value = '';
+    document.getElementById('issueDescription').value = '';
+    document.getElementById('estDuration').value = '';
+    document.getElementById('hospitalName').value = '';
+    document.getElementById('assignedEngineer').value = '';
+    hideMsg('formMsg');
+
+    // Set default date to today, time to 10:00
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('scheduledDate').value = today;
+    document.getElementById('scheduledTime').value = '10:00';
+
+    // Reload dropdowns if empty
+    if (hospitalsData.length === 0) loadFormData();
+    // Reset model dropdown if it was replaced with input
+    const modelEl = document.getElementById('model');
+    if (modelEl.tagName === 'INPUT') {
+        const sel = document.createElement('select');
+        sel.id = 'model';
+        sel.required = true;
+        sel.setAttribute('onchange', 'autoFillEquipment()');
+        modelEl.parentNode.replaceChild(sel, modelEl);
+        populateEquipmentDropdown();
+    } else {
+        document.getElementById('model').value = '';
+    }
+}
+
+function closeNewCallModal() {
+    document.getElementById('newCallModal').classList.remove('active');
+}
+
+// ─────────────────────────────────────────────
+// SUBMIT NEW SERVICE CALL
+// ─────────────────────────────────────────────
+function submitNewCall() {
+    const required = [
+        ['hospitalName','Hospital Name'], ['contactPerson','Contact Person'],
+        ['phoneNumber','Phone Number'],   ['model','Equipment Model'],
+        ['serviceType','Service Type'],   ['urgency','Urgency'],
+        ['scheduledDate','Scheduled Date'], ['scheduledTime','Scheduled Time'],
+        ['issueDescription','Issue Description'], ['assignedEngineer','Assigned Engineer']
+    ];
+
+    for (const [id, label] of required) {
+        const el = document.getElementById(id);
+        if (!el || !el.value.trim()) {
+            showMsg('formMsg', 'error', '⚠️ Please fill in: ' + label);
+            if (el) el.focus();
             return;
         }
-        tbody.innerHTML = calls.map(call => {
-            const urg = (call.Urgency || 'normal').toLowerCase();
-            const sta = (call.Status || '').toLowerCase().replace(/\s/g,'');
-            const war = (call['Warranty Status'] || '').toLowerCase().replace(/\s/g,'');
-            return `<tr class="${call.Urgency === 'Critical' ? 'critical' : ''}">
-                <td><strong style="color:#3498db;">${call['Call ID']}</strong></td>
-                <td><div style="font-weight:600;">${call['Hospital Name']}</div><div style="font-size:0.8rem;color:#7f8c8d;">${call.City||''}</div></td>
-                <td><div>${call['Equipment Model']||''}</div><div style="font-size:0.8rem;color:#7f8c8d;">${call['Serial Number']||''}</div></td>
-                <td>${call['Service Type']||''}</td>
-                <td><span class="badge badge-${urg}">${call.Urgency||''}</span></td>
-                <td>${call['Assigned Engineer']||'—'}</td>
-                <td><div>${call['Scheduled Date']||''}</div><div style="font-size:0.8rem;color:#7f8c8d;">${call['Scheduled Time']||''}</div></td>
-                <td><span class="badge badge-${war}">${call['Warranty Status']||'TBC'}</span></td>
-                <td><span class="badge badge-${sta}">${call.Status||''}</span></td>
-                <td><button class="btn-update" onclick="openStatusModal('${call['Call ID']}','${call['Hospital Name'].replace(/'/g,"\\'")}')">✏️ Update</button></td>
-            </tr>`;
-        }).join('');
     }
 
-    function openNewCallModal() {
-        document.getElementById('newCallModal').classList.add('active');
-        document.getElementById('newCallForm').reset();
-        hideMsg('formMessage');
-        const d = new Date(); d.setDate(d.getDate()+1);
-        document.getElementById('scheduledDate').value = d.toISOString().split('T')[0];
-        document.getElementById('scheduledTime').value = '10:00';
+    const phone = document.getElementById('phoneNumber').value.trim();
+    if (!/^\d{10}$/.test(phone)) {
+        showMsg('formMsg','error','⚠️ Phone number must be exactly 10 digits');
+        return;
     }
-    function closeNewCallModal() { document.getElementById('newCallModal').classList.remove('active'); }
 
-    function submitNewCall() {
-        const fields = [
-            ['hospitalName','Hospital Name'],['contactPerson','Contact Person'],
-            ['phoneNumber','Phone Number'],['city','City'],['state','State'],
-            ['model','Equipment Model'],['serviceType','Service Type'],
-            ['urgency','Urgency'],['scheduledDate','Scheduled Date'],
-            ['scheduledTime','Scheduled Time'],['issueDescription','Issue Description'],
-            ['assignedEngineer','Assigned Engineer']
-        ];
-        for (const [id, label] of fields) {
-            if (!document.getElementById(id).value.trim()) {
-                showMsg('formMessage','error','Please fill in: ' + label);
-                document.getElementById(id).focus();
-                return;
-            }
+    const hospitalVal = document.getElementById('hospitalName').value;
+    const hospitalName = hospitalVal === '__new__'
+        ? document.getElementById('hospitalManual') ? document.getElementById('hospitalManual').value : ''
+        : hospitalVal;
+
+    const callData = {
+        hospitalName:     hospitalName,
+        contactPerson:    document.getElementById('contactPerson').value.trim(),
+        phoneNumber:      phone,
+        email:            document.getElementById('email').value.trim(),
+        city:             document.getElementById('city').value.trim(),
+        state:            '',
+        model:            document.getElementById('model').value.trim(),
+        serialNumber:     document.getElementById('serialNumber').value.trim(),
+        warrantyStatus:   document.getElementById('warrantyStatus').value,
+        serviceType:      document.getElementById('serviceType').value,
+        urgency:          document.getElementById('urgency').value,
+        scheduledDate:    document.getElementById('scheduledDate').value,
+        scheduledTime:    document.getElementById('scheduledTime').value,
+        issueDescription: document.getElementById('issueDescription').value.trim(),
+        assignedEngineer: document.getElementById('assignedEngineer').value,
+        estDuration:      document.getElementById('estDuration').value || ''
+    };
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span> Submitting...';
+    showMsg('formMsg','info','Saving to Google Sheet and sending WhatsApp...');
+
+    fetch(API, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({action:'logServiceCall', callData})
+    }).then(() => {
+        btn.disabled = false;
+        btn.innerHTML = '✅ Submit Service Call';
+        closeNewCallModal();
+        showMsg('tableMsg','success',
+            `✅ Service call logged for ${callData.hospitalName}! WhatsApp sent to customer & ${callData.assignedEngineer}.`);
+        setTimeout(loadCalls, 1500);
+    }).catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '✅ Submit Service Call';
+        showMsg('formMsg','error','❌ Error submitting. Try again.');
+        console.error(err);
+    });
+}
+
+// ─────────────────────────────────────────────
+// LOAD ACTIVE CALLS TABLE
+// ─────────────────────────────────────────────
+function loadCalls() {
+    showMsg('tableMsg','info','Loading calls...');
+    const cb = 'lc_' + Date.now();
+    window[cb] = function(res) {
+        if (res.success) {
+            renderTable(res.data.calls || []);
+            loadStats();
+            hideMsg('tableMsg');
+        } else {
+            showMsg('tableMsg','error','Error loading calls. Please refresh.');
         }
-        const phone = document.getElementById('phoneNumber').value.trim();
-        if (!/^\d{10}$/.test(phone)) { showMsg('formMessage','error','Phone must be 10 digits'); return; }
+        delete window[cb];
+    };
+    const s = document.createElement('script');
+    s.src = API + '?action=getActiveCalls&callback=' + cb;
+    document.body.appendChild(s);
+}
 
-        const callData = {
-            hospitalName: document.getElementById('hospitalName').value.trim(),
-            contactPerson: document.getElementById('contactPerson').value.trim(),
-            phoneNumber: phone,
-            email: document.getElementById('email').value.trim(),
-            city: document.getElementById('city').value,
-            state: document.getElementById('state').value,
-            model: document.getElementById('model').value.trim(),
-            serialNumber: document.getElementById('serialNumber').value.trim(),
-            warrantyStatus: document.getElementById('warrantyStatus').value,
-            serviceType: document.getElementById('serviceType').value,
-            urgency: document.getElementById('urgency').value,
-            scheduledDate: document.getElementById('scheduledDate').value,
-            scheduledTime: document.getElementById('scheduledTime').value,
-            issueDescription: document.getElementById('issueDescription').value.trim(),
-            assignedEngineer: document.getElementById('assignedEngineer').value,
-            estDuration: document.getElementById('estDuration').value || ''
-        };
+function loadStats() {
+    const cb = 'ls_' + Date.now();
+    window[cb] = function(res) {
+        if (res.success) {
+            const s = res.data.stats;
+            document.getElementById('statToday').textContent     = s.todayCalls    || 0;
+            document.getElementById('statCompleted').textContent = s.completedToday || 0;
+            document.getElementById('statPending').textContent   = s.pendingCalls   || 0;
+            document.getElementById('statCritical').textContent  = s.criticalCalls  || 0;
+        }
+        delete window[cb];
+    };
+    const s = document.createElement('script');
+    s.src = API + '?action=getDashboardStats&callback=' + cb;
+    document.body.appendChild(s);
+}
 
-        showMsg('formMessage','info','Submitting...');
-        document.getElementById('submitBtn').disabled = true;
-        document.getElementById('submitBtn').textContent = 'Submitting...';
-
-        fetch(API, {
-            method: 'POST', mode: 'no-cors',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({action: 'logServiceCall', callData: callData})
-        }).then(() => {
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('submitBtn').textContent = '✅ Submit Service Call';
-            closeNewCallModal();
-            showMsg('tableMessage','success',`✅ Service call submitted for ${callData.hospitalName}! WhatsApp notifications sent to engineer and customer.`);
-            setTimeout(loadCalls, 1500);
-        }).catch(() => {
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('submitBtn').textContent = '✅ Submit Service Call';
-            showMsg('formMessage','error','Error submitting. Please try again.');
-        });
+function renderTable(calls) {
+    const tbody = document.getElementById('callsBody');
+    if (!calls.length) {
+        tbody.innerHTML = '<tr><td colspan="10" class="empty-state">📋 No active calls. Click "➕ New Service Call" to add one.</td></tr>';
+        return;
     }
+    tbody.innerHTML = calls.map(c => {
+        const urg = (c.Urgency||'normal').toLowerCase();
+        const sta = (c.Status||'').toLowerCase().replace(/\s+/g,'');
+        const war = (c['Warranty Status']||'').toLowerCase().replace(/\s+/g,'').replace('tobechecked','tobechecked');
+        return `<tr class="${c.Urgency==='Critical'?'critical':''}">
+            <td><strong style="color:#3498db;font-family:'Poppins',sans-serif;">${c['Call ID']}</strong></td>
+            <td><div style="font-weight:600;">${c['Hospital Name']||''}</div><small style="color:#7f8c8d;">${c.City||''}</small></td>
+            <td><div>${c['Equipment Model']||''}</div><small style="color:#7f8c8d;">${c['Serial Number']||''}</small></td>
+            <td>${c['Service Type']||''}</td>
+            <td><span class="badge badge-${urg}">${c.Urgency||''}</span></td>
+            <td>${c['Assigned Engineer']||'—'}</td>
+            <td><div>${c['Scheduled Date']||''}</div><small style="color:#7f8c8d;">${c['Scheduled Time']||''}</small></td>
+            <td><span class="badge badge-${war}">${c['Warranty Status']||'TBC'}</span></td>
+            <td><span class="badge badge-${sta}">${c.Status||''}</span></td>
+            <td><button class="btn-update" onclick="openStatusModal('${c['Call ID']}','${(c['Hospital Name']||'').replace(/'/g,"\\'")}')">✏️ Update</button></td>
+        </tr>`;
+    }).join('');
+}
 
-    function openStatusModal(callId, hospitalName) {
-        document.getElementById('statusCallId').value = callId;
-        document.getElementById('statusCallLabel').textContent = callId + ' — ' + hospitalName;
-        document.getElementById('statusModal').classList.add('active');
-    }
-    function closeStatusModal() { document.getElementById('statusModal').classList.remove('active'); }
+// ─────────────────────────────────────────────
+// STATUS UPDATE
+// ─────────────────────────────────────────────
+function openStatusModal(callId, hospital) {
+    document.getElementById('statusCallId').value = callId;
+    document.getElementById('statusCallLabel').textContent = callId + ' — ' + hospital;
+    document.getElementById('statusModal').classList.add('active');
+}
+function closeStatusModal() { document.getElementById('statusModal').classList.remove('active'); }
 
-    function setStatus(newStatus) {
-        const callId = document.getElementById('statusCallId').value;
-        fetch(API, {
-            method: 'POST', mode: 'no-cors',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({action: 'updateCallStatus', callId: callId, status: newStatus})
-        }).then(() => {
-            closeStatusModal();
-            showMsg('tableMessage','success',`✅ ${callId} updated to "${newStatus}"`);
-            setTimeout(loadCalls, 1200);
-        });
-    }
+function setStatus(newStatus) {
+    const callId = document.getElementById('statusCallId').value;
+    fetch(API, {
+        method: 'POST', mode: 'no-cors',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({action:'updateCallStatus', callId, status:newStatus})
+    }).then(() => {
+        closeStatusModal();
+        showMsg('tableMsg','success',`✅ ${callId} updated to "${newStatus}"`);
+        setTimeout(loadCalls, 1200);
+    });
+}
 
-    function showMsg(id, type, text) {
-        const el = document.getElementById(id);
-        el.className = 'message ' + type + ' show';
-        el.textContent = text;
-    }
-    function hideMsg(id) { document.getElementById(id).classList.remove('show'); }
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function showMsg(id, type, text) {
+    const el = document.getElementById(id);
+    el.className = 'msg ' + type + ' show';
+    el.textContent = text;
+}
+function hideMsg(id) { document.getElementById(id).classList.remove('show'); }
 
-    window.onload = loadCalls;
+// On load: fetch calls AND form data
+window.onload = () => {
+    loadCalls();
+    loadFormData();
+};
 </script>
 </body>
 </html>
