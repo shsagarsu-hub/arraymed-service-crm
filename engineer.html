@@ -72,11 +72,7 @@
             <div class="logo-text">🛠️ ArrayMed</div>
             <p style="text-align: center; color: #666; margin-bottom: 1.5rem;">Engineer Portal Login</p>
             <select id="engineerName" style="margin-bottom: 1rem;">
-                <option value="">Select Your Name</option>
-                <option value="Rohith M R">Rohith M R</option>
-                <option value="Madhusudhan N">Madhusudhan N</option>
-                <option value="Jayanth B">Jayanth B</option>
-                <option value="Ebin Thomas Lalson">Ebin Thomas Lalson</option>
+                <option value="">⏳ Loading engineers...</option>
             </select>
             <button class="btn btn-primary" onclick="login()">Login</button>
         </div>
@@ -449,15 +445,44 @@
         
         // Check if logged in on page load
         window.onload = () => {
+            loadEngineersDropdown();
             engineer = localStorage.getItem('engineer');
             if (engineer) {
                 showApp();
             } else {
-                // Force show login screen
                 document.getElementById('loginScreen').style.display = 'block';
                 document.getElementById('appScreen').style.display = 'none';
             }
         };
+
+        function loadEngineersDropdown() {
+            const cb = 'eng_' + Date.now();
+            window[cb] = function(res) {
+                if (res.success) {
+                    const sel = document.getElementById('engineerName');
+                    sel.innerHTML = '<option value="">Select Your Name</option>';
+                    (res.data.engineers || []).forEach(e => {
+                        const opt = document.createElement('option');
+                        opt.value = e.name;
+                        opt.textContent = e.name;
+                        sel.appendChild(opt);
+                    });
+                } else {
+                    // Fallback to hardcoded if API fails
+                    document.getElementById('engineerName').innerHTML = `
+                        <option value="">Select Your Name</option>
+                        <option value="Rajesh Kumar">Rajesh Kumar</option>
+                        <option value="Priya Sharma">Priya Sharma</option>
+                        <option value="Amit Patel">Amit Patel</option>
+                        <option value="Sneha Reddy">Sneha Reddy</option>
+                    `;
+                }
+                delete window[cb];
+            };
+            const s = document.createElement('script');
+            s.src = API + '?action=getEngineers&callback=' + cb;
+            document.body.appendChild(s);
+        }
     </script>
 </body>
 </html>
