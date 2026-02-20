@@ -1,186 +1,680 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArrayMed Service CRM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #3498db; --success: #2ecc71; --danger: #e74c3c;
-            --warning: #f39c12; --dark: #2c3e50; --light: #ecf0f1; --bg: #f8f9fa;
-        }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, #2980b9 100%);
-            color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: sticky; top: 0; z-index: 100;
-        }
-        .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-family: 'Poppins', sans-serif; font-size: 1.75rem; font-weight: 800; }
-        .btn {
-            padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; display: inline-flex; gap: 0.5rem;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #2980b9; transform: translateY(-2px); }
-        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card {
-            background: white; padding: 1.5rem; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid var(--primary);
-        }
-        .stat-card.success { border-color: var(--success); }
-        .stat-card.warning { border-color: var(--warning); }
-        .stat-card.danger { border-color: var(--danger); }
-        .stat-label { font-size: 0.875rem; color: #7f8c8d; font-weight: 600; text-transform: uppercase; }
-        .stat-value { font-size: 2.5rem; font-weight: 800; font-family: 'Poppins', sans-serif; margin-top: 0.5rem; }
-        .section { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--light); }
-        .section-title { font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 700; }
-        .message { padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1rem; display: none; }
-        .message.success { background: #e8f5e9; color: #2e7d32; border-left: 4px solid #4caf50; display: block; }
-        .message.error { background: #ffebee; color: #c62828; border-left: 4px solid #f44336; display: block; }
-        .message.info { background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196f3; display: block; }
-        .empty-state { text-align: center; padding: 3rem 2rem; color: #95a5a6; }
-        .empty-state-icon { font-size: 4rem; margin-bottom: 1rem; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: var(--bg); padding: 1rem; text-align: left; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; }
-        td { padding: 1rem; border-bottom: 1px solid var(--light); }
-        tr:hover { background: #f8f9fa; }
-    </style>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArrayMed Service CRM – Coordinator</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'DM Sans','Segoe UI',sans-serif;}
+    body{background:#f5efe6;min-height:100vh;}
+
+    /* ── HEADER ── */
+    .hdr{background:#ede4d4;border-bottom:2px solid #d9cfc0;padding:14px 24px;
+         position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(90,70,50,.10);}
+    .hdr-in{display:flex;justify-content:space-between;align-items:center;
+            max-width:1700px;margin:0 auto;flex-wrap:wrap;gap:10px;}
+    .logo{display:flex;align-items:center;gap:10px;}
+    .logo h1{font-size:19px;font-weight:800;color:#2c2116;display:flex;align-items:center;gap:8px;}
+    .logo h1 span{font-weight:500;color:#8b7355;font-size:15px;}
+    .hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .btn-nl{background:linear-gradient(135deg,#b5451b,#8b2a0e);color:#fff;border:none;
+            padding:9px 18px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;
+            font-family:inherit;box-shadow:0 3px 10px rgba(181,69,27,.30);transition:all .2s;}
+    .btn-nl:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(181,69,27,.42);}
+    .btn-ref{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;
+             padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;
+             font-family:inherit;cursor:pointer;transition:all .2s;}
+    .btn-ref:hover{transform:translateY(-1px);}
+    .btn-lo{background:#2c2116;color:#ede4d4;border:none;padding:8px 14px;border-radius:8px;
+            font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s;}
+    .btn-lo:hover{background:#4a3728;}
+
+    /* ── WRAP ── */
+    .wrap{max-width:1700px;margin:0 auto;padding:20px 16px;}
+
+    /* ── STATS ── */
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
+    .sc{background:#fffdf9;border-radius:14px;padding:18px 20px;
+        box-shadow:0 4px 16px rgba(90,70,50,.08);border:1px solid rgba(200,180,150,.20);transition:all .3s;}
+    .sc:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(90,70,50,.12);}
+    .sc-lbl{font-size:10px;font-weight:700;color:#8b7355;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+    .sc-val{font-size:26px;font-weight:800;background:linear-gradient(135deg,#667eea,#764ba2);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sc.red .sc-val{background:linear-gradient(135deg,#e74c3c,#c0392b);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sc.grn .sc-val{background:linear-gradient(135deg,#27ae60,#2ecc71);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sc.org .sc-val{background:linear-gradient(135deg,#e67e22,#f39c12);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+    /* ── CARD ── */
+    .card{background:#fffdf9;border-radius:14px;box-shadow:0 4px 16px rgba(90,70,50,.08);
+          padding:22px;margin-bottom:20px;border:1px solid rgba(200,180,150,.20);}
+    .card-hdr{display:flex;justify-content:space-between;align-items:center;
+              margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid #ede4d8;flex-wrap:wrap;gap:10px;}
+    .card-hdr h2{font-size:17px;font-weight:800;color:#2c2116;}
+
+    /* ── FILTERS ── */
+    .fbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;
+          padding:12px 16px;background:#f5ede0;border-radius:10px;border:1px solid #e8ddd0;}
+    .fsel{padding:7px 28px 7px 10px;border:1.5px solid #e8ddd0;border-radius:8px;font-size:12px;
+          color:#2c2116;background:#fffdf9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b7355' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center;
+          font-family:inherit;appearance:none;cursor:pointer;}
+    .fsel:focus{outline:none;border-color:#667eea;}
+    .srch{padding:8px 14px;border:2px solid #e8ddd0;border-radius:8px;font-size:13px;
+          width:220px;font-family:inherit;color:#2c2116;background:#fffdf9;}
+    .srch:focus{outline:none;border-color:#667eea;}
+    .btn-ghost{background:#fffdf9;border:1.5px solid #e8ddd0;color:#6b5344;padding:7px 12px;
+               border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+    .flbl{font-size:11px;font-weight:700;color:#8b7355;text-transform:uppercase;letter-spacing:.5px;}
+
+    /* ── TABLE ── */
+    .tbl-wrap{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;min-width:1100px;}
+    th{background:linear-gradient(135deg,#f5ede0,#ede4d8);color:#6b5344;font-weight:700;
+       padding:11px 12px;text-align:left;font-size:10px;border-bottom:2px solid #e8ddd0;
+       white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;}
+    td{padding:11px 12px;border-bottom:1px solid #f0e8dc;font-size:12px;color:#2c2116;}
+    tr:hover td{background:rgba(102,126,234,.03);}
+    tr.crit td{background:#fff8f5;}
+    .badge{padding:3px 10px;border-radius:20px;font-weight:700;font-size:10px;display:inline-block;white-space:nowrap;}
+    .b-critical{background:#fde8e8;color:#c0392b;}
+    .b-high{background:#fef3e2;color:#d68910;}
+    .b-normal{background:#e8f4ff;color:#2471a3;}
+    .b-low{background:#f0e6ff;color:#7d3c98;}
+    .b-assigned{background:#fef3e2;color:#d68910;}
+    .b-inprogress{background:#e8f4ff;color:#2471a3;}
+    .b-completed{background:#e8f8f0;color:#1e8449;}
+    .b-onhold{background:#fde8e8;color:#c0392b;}
+    .b-cancelled{background:#f0f0f0;color:#7f8c8d;}
+    .b-inwarranty{background:#e8f8f0;color:#1e8449;}
+    .b-outofwarranty{background:#fde8e8;color:#c0392b;}
+    .b-amc{background:#e8eaf6;color:#3949ab;}
+    .b-tobechecked{background:#f5f0e8;color:#8b7355;}
+    .btn-upd{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;
+             padding:5px 12px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;
+             font-family:inherit;transition:all .2s;}
+    .btn-upd:hover{transform:translateY(-1px);}
+    .no-data{text-align:center;padding:60px 20px;color:#8b7355;}
+    .no-data .icon{font-size:48px;margin-bottom:16px;}
+    .no-data h3{font-size:17px;font-weight:800;color:#4a3728;margin-bottom:6px;}
+
+    /* ── MESSAGES ── */
+    .msg{padding:12px 16px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:600;display:none;border-left:4px solid;}
+    .msg-ok{background:#d4f5e4;color:#145a32;border-color:#28a745;}
+    .msg-err{background:#fde8e8;color:#721c24;border-color:#dc3545;}
+    .msg-inf{background:#e3f2fd;color:#1565c0;border-color:#2196f3;}
+
+    /* ── OVERLAY/MODAL ── */
+    .ov{position:fixed;inset:0;background:rgba(44,33,22,.50);backdrop-filter:blur(4px);
+        display:none;justify-content:center;align-items:flex-start;z-index:1000;
+        padding:24px 16px;overflow-y:auto;}
+    .ov.show{display:flex;}
+    .modal{background:#fffdf9;border-radius:18px;width:100%;max-width:760px;
+           box-shadow:0 20px 60px rgba(90,70,50,.28);animation:slideUp .3s ease;}
+    @keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    .modal-hdr{background:linear-gradient(135deg,#2c2116,#4a3728);color:#ede4d4;
+               padding:20px 24px;border-radius:18px 18px 0 0;
+               display:flex;justify-content:space-between;align-items:center;}
+    .modal-hdr h2{font-size:17px;font-weight:800;}
+    .modal-close{background:rgba(255,255,255,.15);border:none;color:#ede4d4;
+                 width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;
+                 transition:background .2s;}
+    .modal-close:hover{background:rgba(255,255,255,.28);}
+    .modal-body{padding:24px;max-height:70vh;overflow-y:auto;}
+    .modal-foot{padding:16px 24px;background:#f5ede0;border-top:2px solid #ede4d8;
+                border-radius:0 0 18px 18px;display:flex;gap:10px;justify-content:flex-end;}
+
+    /* ── FORM ── */
+    .fsec{margin-bottom:22px;}
+    .fsec-title{font-size:11px;font-weight:800;color:#b5451b;text-transform:uppercase;
+                letter-spacing:.7px;margin-bottom:12px;padding-bottom:8px;
+                border-bottom:2px solid #ede4d8;display:flex;align-items:center;gap:6px;}
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .fgrid.three{grid-template-columns:1fr 1fr 1fr;}
+    .fgrid.one{grid-template-columns:1fr;}
+    .fg{display:flex;flex-direction:column;gap:5px;}
+    .fg label{font-size:11px;font-weight:700;color:#6b5344;text-transform:uppercase;letter-spacing:.4px;}
+    .fg input,.fg select,.fg textarea{
+      padding:9px 12px;border:2px solid #e8ddd0;border-radius:9px;font-size:13px;
+      font-family:inherit;color:#2c2116;background:#fffdf9;transition:border-color .2s;}
+    .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#667eea;}
+    .fg input[readonly]{background:#f5ede0;color:#8b7355;cursor:default;}
+    .fg textarea{min-height:80px;resize:vertical;}
+    .req{color:#b5451b;}
+    .note{font-size:10px;color:#27ae60;font-style:italic;margin-top:2px;min-height:14px;}
+    .btn-cancel{background:#fffdf9;border:2px solid #e8ddd0;color:#6b5344;
+                padding:9px 20px;border-radius:9px;cursor:pointer;font-weight:700;font-family:inherit;}
+    .btn-submit{background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;border:none;
+                padding:9px 24px;border-radius:9px;cursor:pointer;font-weight:800;
+                font-size:14px;font-family:inherit;transition:all .2s;}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;}
+
+    /* ── STATUS MODAL ── */
+    .status-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+    .status-opt{padding:14px;border:2px solid #e8ddd0;border-radius:10px;text-align:center;
+                cursor:pointer;font-weight:700;font-size:13px;transition:all .2s;background:#fffdf9;color:#2c2116;}
+    .status-opt:hover{border-color:#667eea;background:#f0f0ff;color:#667eea;}
+
+    /* ── SPINNER ── */
+    .spin{border:3px solid #ede4d8;border-top-color:#667eea;border-radius:50%;
+          width:14px;height:14px;animation:spin .8s linear infinite;display:inline-block;
+          vertical-align:middle;margin-right:6px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    @media(min-width:768px){.wrap{padding:28px 40px;}.hdr{padding:16px 40px;}}
+    @media(max-width:600px){.fgrid,.fgrid.three{grid-template-columns:1fr;}.stats{grid-template-columns:1fr 1fr;}}
+  </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <h1>🛠️ Service CRM - Coordinator</h1>
-            <button class="btn btn-primary" onclick="alert('Feature coming soon!')">➕ New Service Call</button>
-        </div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="logo">
+      <h1>
+        <svg width="130" height="28" viewBox="0 0 200 44" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+          <text y="38" font-family="Georgia,serif" font-size="42" font-weight="900" letter-spacing="-1">
+            <tspan fill="#1a1a1a">Array</tspan><tspan fill="#e8192c">Med</tspan>
+          </text>
+        </svg>
+        <span>| Service CRM</span>
+      </h1>
     </div>
-    
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Today's Calls</div>
-                <div class="stat-value" id="todayCalls">0</div>
-            </div>
-            <div class="stat-card success">
-                <div class="stat-label">Completed Today</div>
-                <div class="stat-value" id="completedToday">0</div>
-            </div>
-            <div class="stat-card warning">
-                <div class="stat-label">Pending Calls</div>
-                <div class="stat-value" id="pendingCalls">0</div>
-            </div>
-            <div class="stat-card danger">
-                <div class="stat-label">Critical Issues</div>
-                <div class="stat-value" id="criticalCalls">0</div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">📋 Active Service Calls</h2>
-                <button class="btn btn-primary" onclick="loadData()">🔄 Refresh</button>
-            </div>
-            
-            <div id="message" class="message"></div>
-            
-            <div id="tableContainer">
-                <div class="empty-state">
-                    <div class="empty-state-icon">📞</div>
-                    <h3>Loading...</h3>
-                </div>
-            </div>
-        </div>
+    <div class="hdr-right">
+      <button class="btn-ref" onclick="loadCalls()">🔄 Refresh</button>
+      <button class="btn-nl" onclick="openNewCallModal()">➕ New Service Call</button>
     </div>
-    
-    <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
-        
-        window.onload = function() {
-            loadData();
-        };
-        
-        function loadData() {
-            showMessage('info', 'Loading...');
-            
-            const callback = 'jsonpCallback_' + Date.now();
-            window[callback] = function(data) {
-                console.log('Data received:', data);
-                
-                if (data && data.success) {
-                    const calls = data.data.calls || [];
-                    updateStats(calls);
-                    renderTable(calls);
-                    hideMessage();
-                } else {
-                    showMessage('error', 'Error loading data');
-                }
-                
-                delete window[callback];
-            };
-            
-            const script = document.createElement('script');
-            script.src = API_URL + '?action=getActiveCalls&callback=' + callback;
-            document.body.appendChild(script);
-            
-            setTimeout(() => {
-                if (window[callback]) {
-                    showMessage('error', 'Connection timeout');
-                    delete window[callback];
-                }
-            }, 10000);
-        }
-        
-        function updateStats(calls) {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('todayCalls').textContent = calls.filter(c => c['Date Logged'] == today).length;
-            document.getElementById('completedToday').textContent = calls.filter(c => c.Status == 'Completed').length;
-            document.getElementById('pendingCalls').textContent = calls.filter(c => ['Assigned', 'In Progress'].includes(c.Status)).length;
-            document.getElementById('criticalCalls').textContent = calls.filter(c => c.Urgency == 'Critical').length;
-        }
-        
-        function renderTable(calls) {
-            const container = document.getElementById('tableContainer');
-            
-            if (calls.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📞</div><h3>No active calls</h3></div>';
-                return;
-            }
-            
-            container.innerHTML = `
-                <table>
-                    <thead><tr>
-                        <th>Call ID</th><th>Hospital</th><th>Equipment</th><th>Type</th>
-                        <th>Urgency</th><th>Engineer</th><th>Status</th><th>Scheduled</th>
-                    </tr></thead>
-                    <tbody>${calls.map(c => `
-                        <tr>
-                            <td><strong>${c['Call ID']}</strong></td>
-                            <td>${c['Hospital Name']}</td>
-                            <td>${c['Equipment Model']}</td>
-                            <td>${c['Service Type']}</td>
-                            <td>${c.Urgency}</td>
-                            <td>${c['Assigned Engineer']}</td>
-                            <td>${c.Status}</td>
-                            <td>${c['Scheduled Date']}</td>
-                        </tr>
-                    `).join('')}</tbody>
-                </table>
-            `;
-        }
-        
-        function showMessage(type, text) {
-            const msg = document.getElementById('message');
-            msg.className = 'message ' + type;
-            msg.textContent = text;
-        }
-        
-        function hideMessage() {
-            document.getElementById('message').style.display = 'none';
-        }
-    </script>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="sc"><div class="sc-lbl">Today's Calls</div><div class="sc-val" id="s1">—</div></div>
+    <div class="sc grn"><div class="sc-lbl">Completed Today</div><div class="sc-val" id="s2">—</div></div>
+    <div class="sc org"><div class="sc-lbl">Pending Calls</div><div class="sc-val" id="s3">—</div></div>
+    <div class="sc red"><div class="sc-lbl">Critical Issues</div><div class="sc-val" id="s4">—</div></div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="card">
+    <div class="card-hdr">
+      <h2>📋 Active Service Calls</h2>
+      <input type="text" class="srch" id="srch" placeholder="🔍 Search calls…" oninput="applyFilters()">
+    </div>
+
+    <div class="fbar">
+      <span class="flbl">Filter:</span>
+      <select class="fsel" id="fUrg" onchange="applyFilters()">
+        <option value="">All Urgency</option>
+        <option>Critical</option><option>High</option><option>Normal</option><option>Low</option>
+      </select>
+      <select class="fsel" id="fSta" onchange="applyFilters()">
+        <option value="">All Status</option>
+        <option>Assigned</option><option>In Progress</option>
+        <option>Completed</option><option>On Hold</option><option>Cancelled</option>
+      </select>
+      <select class="fsel" id="fTyp" onchange="applyFilters()">
+        <option value="">All Types</option>
+        <option>Repair</option><option>Installation</option><option>PMC</option>
+        <option>Calibration</option><option>Training</option><option>Demo</option>
+        <option>Warranty Claim</option>
+      </select>
+      <button class="btn-ghost" onclick="clearFilters()">✕ Clear</button>
+    </div>
+
+    <div id="msgOk"  class="msg msg-ok"></div>
+    <div id="msgErr" class="msg msg-err"></div>
+    <div id="msgInf" class="msg msg-inf"></div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Call ID</th><th>Hospital</th><th>Equipment</th><th>Service Type</th>
+          <th>Urgency</th><th>Engineer</th><th>Scheduled</th>
+          <th>Warranty</th><th>Status</th><th>Action</th>
+        </tr></thead>
+        <tbody id="tbody">
+          <tr><td colspan="10" style="text-align:center;padding:40px;color:#8b7355;">
+            <span class="spin"></span> Loading service calls…
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- NEW SERVICE CALL MODAL -->
+<div class="ov" id="ovNew">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h2>➕ Log New Service Call</h2>
+      <button class="modal-close" onclick="closeNew()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="fmsg" class="msg msg-err"></div>
+
+      <div class="fsec">
+        <div class="fsec-title">🏥 Hospital Information</div>
+        <div class="fgrid one">
+          <div class="fg">
+            <label>Hospital Name <span class="req">*</span></label>
+            <select id="hospitalName" onchange="autoFillHospital()" required>
+              <option value="">— Loading from Sales CRM… —</option>
+            </select>
+            <span class="note" id="hospNote"></span>
+          </div>
+        </div>
+        <div class="fgrid" style="margin-top:12px;">
+          <div class="fg">
+            <label>Contact Person <span class="req">*</span></label>
+            <input type="text" id="contactPerson" placeholder="Auto-filled from Sales CRM" required>
+          </div>
+          <div class="fg">
+            <label>Phone <span class="req">*</span></label>
+            <input type="tel" id="phoneNumber" placeholder="10 digits" maxlength="10" required>
+          </div>
+          <div class="fg">
+            <label>Email</label>
+            <input type="email" id="hospEmail" placeholder="Auto-filled">
+          </div>
+          <div class="fg">
+            <label>City</label>
+            <input type="text" id="city" placeholder="Auto-filled" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">🔧 Equipment Details</div>
+        <div class="fgrid three">
+          <div class="fg">
+            <label>Equipment Model <span class="req">*</span></label>
+            <select id="model" onchange="autoFillEquipment()" required>
+              <option value="">— Select Equipment —</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Serial Number</label>
+            <input type="text" id="serialNumber" placeholder="e.g. SN-2024-001">
+          </div>
+          <div class="fg">
+            <label>Warranty Status</label>
+            <select id="warrantyStatus">
+              <option>To Be Checked</option>
+              <option>In Warranty</option>
+              <option>Out of Warranty</option>
+              <option>AMC</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">📋 Service Request</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label>Service Type <span class="req">*</span></label>
+            <select id="serviceType" required>
+              <option value="">Select Type</option>
+              <option>Repair</option><option>Installation</option><option>PMC</option>
+              <option>Calibration</option><option>Training</option><option>Demo</option>
+              <option>Warranty Claim</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Urgency <span class="req">*</span></label>
+            <select id="urgency" required>
+              <option value="">Select Urgency</option>
+              <option value="Critical">🚨 Critical – Equipment Down</option>
+              <option value="High">⚠️ High – Affecting Patient Care</option>
+              <option value="Normal">📋 Normal – Scheduled</option>
+              <option value="Low">ℹ️ Low – Minor Issue</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Scheduled Date <span class="req">*</span></label>
+            <input type="date" id="scheduledDate" required>
+          </div>
+          <div class="fg">
+            <label>Scheduled Time <span class="req">*</span></label>
+            <input type="time" id="scheduledTime" required>
+          </div>
+        </div>
+        <div class="fgrid one" style="margin-top:12px;">
+          <div class="fg">
+            <label>Issue Description <span class="req">*</span></label>
+            <textarea id="issueDescription" placeholder="Describe the issue clearly…" required></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">👷 Assign Engineer</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label>Assign To <span class="req">*</span></label>
+            <select id="assignedEngineer" required>
+              <option value="">— Select Engineer —</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Estimated Duration (hrs)</label>
+            <input type="number" id="estDuration" placeholder="e.g. 3" min="0.5" step="0.5">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeNew()">Cancel</button>
+      <button class="btn-submit" id="submitBtn" onclick="submitNewCall()">✅ Submit Service Call</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS UPDATE MODAL -->
+<div class="ov" id="ovStatus">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-hdr">
+      <h2>✏️ Update Call Status</h2>
+      <button class="modal-close" onclick="closeStatus()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="statusCallId">
+      <p style="font-size:12px;color:#8b7355;margin-bottom:4px;">Updating call:</p>
+      <p style="font-weight:800;font-size:15px;color:#2c2116;margin-bottom:18px;" id="statusLabel"></p>
+      <div class="status-grid">
+        <div class="status-opt" onclick="setStatus('In Progress')">🚀 In Progress</div>
+        <div class="status-opt" onclick="setStatus('Completed')">✅ Completed</div>
+        <div class="status-opt" onclick="setStatus('On Hold')">⏸️ On Hold</div>
+        <div class="status-opt" onclick="setStatus('Cancelled')">❌ Cancelled</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
+let allCalls = [], hospitalsData = [], engineersData = [], equipmentData = [];
+
+// ── Utils ─────────────────────────────────────────────────────
+function msg(id, text, dur=4000) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.style.display = 'block';
+  if (dur) setTimeout(() => el.style.display = 'none', dur);
+}
+function jsonp(url, cb) {
+  const k = 'cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+  window[k] = d => { cb(d); delete window[k]; };
+  const s = document.createElement('script');
+  s.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + k;
+  document.body.appendChild(s);
+}
+function esc(s) { return (s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function badgeCls(val, type) {
+  const v = (val||'').toLowerCase().replace(/[\s-]/g,'');
+  const maps = {
+    urg: {critical:'b-critical',high:'b-high',low:'b-low',normal:'b-normal'},
+    sta: {completed:'b-completed',inprogress:'b-inprogress',onhold:'b-onhold',cancelled:'b-cancelled',assigned:'b-assigned'},
+    war: {inwarranty:'b-inwarranty',outofwarranty:'b-outofwarranty',amc:'b-amc',tobechecked:'b-tobechecked'}
+  };
+  return (maps[type]||{})[v] || 'b-normal';
+}
+function clearFilters() {
+  ['fUrg','fSta','fTyp'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('srch').value = '';
+  applyFilters();
+}
+
+// ── Load & Render ─────────────────────────────────────────────
+function loadCalls() {
+  msg('msgInf','⏳ Loading calls…', 0);
+  jsonp(API + '?action=getActiveCalls', res => {
+    document.getElementById('msgInf').style.display = 'none';
+    if (res.success) {
+      allCalls = res.data.calls || [];
+      applyFilters();
+      loadStats();
+    } else msg('msgErr','❌ Error loading calls. Please refresh.');
+  });
+}
+function loadStats() {
+  jsonp(API + '?action=getDashboardStats', res => {
+    if (res.success) {
+      const s = res.data.stats;
+      document.getElementById('s1').textContent = s.todayCalls    ?? '—';
+      document.getElementById('s2').textContent = s.completedToday ?? '—';
+      document.getElementById('s3').textContent = s.pendingCalls   ?? '—';
+      document.getElementById('s4').textContent = s.criticalCalls  ?? '—';
+    }
+  });
+}
+function applyFilters() {
+  const q   = document.getElementById('srch').value.toLowerCase();
+  const urg = document.getElementById('fUrg').value;
+  const sta = document.getElementById('fSta').value;
+  const typ = document.getElementById('fTyp').value;
+  renderTable(allCalls.filter(c => {
+    if (urg && c.Urgency !== urg) return false;
+    if (sta && c.Status  !== sta) return false;
+    if (typ && c['Service Type'] !== typ) return false;
+    if (q) {
+      const hay = [c['Call ID'],c['Hospital Name'],c['Equipment Model'],c['Assigned Engineer'],c.Status,c.City]
+                   .join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  }));
+}
+function renderTable(calls) {
+  const tbody = document.getElementById('tbody');
+  if (!calls.length) {
+    tbody.innerHTML = `<tr><td colspan="10"><div class="no-data">
+      <div class="icon">🔧</div>
+      <h3>No service calls found</h3>
+      <p>Try clearing filters or log a new service call.</p>
+    </div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = calls.map(c => `
+    <tr class="${c.Urgency==='Critical'?'crit':''}">
+      <td><strong style="color:#667eea;font-size:13px;">${c['Call ID']||''}</strong></td>
+      <td>
+        <div style="font-weight:700;">${c['Hospital Name']||''}</div>
+        <div style="font-size:11px;color:#8b7355;">${c.City||''}</div>
+      </td>
+      <td>
+        <div>${c['Equipment Model']||''}</div>
+        <div style="font-size:11px;color:#8b7355;">${c['Serial Number']||''}</div>
+      </td>
+      <td>${c['Service Type']||''}</td>
+      <td><span class="badge ${badgeCls(c.Urgency,'urg')}">${c.Urgency||''}</span></td>
+      <td style="font-weight:600;">${c['Assigned Engineer']||'—'}</td>
+      <td>
+        <div>${c['Scheduled Date']||''}</div>
+        <div style="font-size:11px;color:#8b7355;">${c['Scheduled Time']||''}</div>
+      </td>
+      <td><span class="badge ${badgeCls(c['Warranty Status'],'war')}">${c['Warranty Status']||'TBC'}</span></td>
+      <td><span class="badge ${badgeCls(c.Status,'sta')}">${c.Status||'Assigned'}</span></td>
+      <td><button class="btn-upd" onclick="openStatus('${esc(c['Call ID'])}','${esc(c['Hospital Name'])}')">✏️ Update</button></td>
+    </tr>`).join('');
+}
+
+// ── Form Data ─────────────────────────────────────────────────
+function loadFormData() {
+  jsonp(API + '?action=getFormData', res => {
+    if (res.success) {
+      hospitalsData = res.data.hospitals || [];
+      engineersData = res.data.engineers || [];
+      equipmentData = res.data.equipment || [];
+      buildHospitalSel(); buildEngineerSel(); buildEquipSel();
+    }
+  });
+}
+function buildHospitalSel() {
+  const sel = document.getElementById('hospitalName');
+  sel.innerHTML = '<option value="">— Select Hospital —</option>';
+  hospitalsData.forEach(h => {
+    const o = document.createElement('option');
+    o.value = h.name; o.textContent = h.name + (h.city ? ' (' + h.city + ')' : '');
+    sel.appendChild(o);
+  });
+  const n = document.createElement('option'); n.value='__new__'; n.textContent='➕ New Hospital (type manually)';
+  sel.appendChild(n);
+}
+function buildEngineerSel() {
+  const sel = document.getElementById('assignedEngineer');
+  sel.innerHTML = '<option value="">— Select Engineer —</option>';
+  engineersData.forEach(e => {
+    const o = document.createElement('option'); o.value=e.name;
+    o.textContent = e.name + (e.specialisation ? ' – '+e.specialisation : '');
+    sel.appendChild(o);
+  });
+}
+function buildEquipSel() {
+  const sel = document.getElementById('model');
+  sel.innerHTML = '<option value="">— Select Equipment —</option>';
+  equipmentData.forEach(e => {
+    const o = document.createElement('option'); o.value=e.model;
+    o.textContent = e.model + (e.category ? ' ['+e.category+']' : '');
+    sel.appendChild(o);
+  });
+  const n = document.createElement('option'); n.value='__new__'; n.textContent='➕ Other (type manually)';
+  sel.appendChild(n);
+}
+function autoFillHospital() {
+  const v = document.getElementById('hospitalName').value;
+  ['contactPerson','phoneNumber','hospEmail','city'].forEach(id => {
+    document.getElementById(id).value='';
+  });
+  if (v === '__new__') {
+    ['contactPerson','phoneNumber','city'].forEach(id =>
+      document.getElementById(id).removeAttribute('readonly'));
+    document.getElementById('hospNote').textContent = 'Enter details manually';
+    return;
+  }
+  const h = hospitalsData.find(x => x.name === v);
+  if (h) {
+    document.getElementById('contactPerson').value = h.contactPerson||'';
+    document.getElementById('phoneNumber').value   = h.phone||'';
+    document.getElementById('hospEmail').value     = h.email||'';
+    document.getElementById('city').value          = h.city||'';
+    document.getElementById('hospNote').textContent = '✅ Auto-filled from Sales CRM data';
+    setTimeout(() => document.getElementById('hospNote').textContent = '', 3000);
+  }
+}
+function autoFillEquipment() {
+  if (document.getElementById('model').value === '__new__') {
+    const s = document.getElementById('model');
+    const i = document.createElement('input');
+    i.type='text'; i.id='model'; i.placeholder='Type equipment model'; i.required=true;
+    s.parentNode.replaceChild(i, s);
+  }
+}
+
+// ── New Call Modal ─────────────────────────────────────────────
+function openNewCallModal() {
+  ['contactPerson','phoneNumber','hospEmail','serialNumber','issueDescription','estDuration']
+    .forEach(id => document.getElementById(id).value='');
+  document.getElementById('city').value='';
+  document.getElementById('warrantyStatus').value='To Be Checked';
+  document.getElementById('serviceType').value='';
+  document.getElementById('urgency').value='';
+  document.getElementById('hospitalName').value='';
+  document.getElementById('assignedEngineer').value='';
+  document.getElementById('fmsg').style.display='none';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('scheduledDate').value = today;
+  document.getElementById('scheduledTime').value = '10:00';
+  // Restore model select if replaced
+  const mel = document.getElementById('model');
+  if (mel && mel.tagName==='INPUT') {
+    const s=document.createElement('select');
+    s.id='model'; s.required=true; s.setAttribute('onchange','autoFillEquipment()');
+    mel.parentNode.replaceChild(s,mel); buildEquipSel();
+  } else if (mel) { mel.value=''; }
+  if (!hospitalsData.length) loadFormData();
+  document.getElementById('ovNew').classList.add('show');
+}
+function closeNew() { document.getElementById('ovNew').classList.remove('show'); }
+
+function submitNewCall() {
+  const req = [
+    ['hospitalName','Hospital Name'],['contactPerson','Contact Person'],
+    ['phoneNumber','Phone Number'],['model','Equipment Model'],
+    ['serviceType','Service Type'],['urgency','Urgency'],
+    ['scheduledDate','Scheduled Date'],['scheduledTime','Scheduled Time'],
+    ['issueDescription','Issue Description'],['assignedEngineer','Assigned Engineer']
+  ];
+  for (const [id,lbl] of req) {
+    const el = document.getElementById(id);
+    if (!el||!el.value.trim()) {
+      document.getElementById('fmsg').textContent = '⚠️ Please fill in: '+lbl;
+      document.getElementById('fmsg').style.display='block';
+      if (el) el.focus(); return;
+    }
+  }
+  if (!/^\d{10}$/.test(document.getElementById('phoneNumber').value.trim())) {
+    document.getElementById('fmsg').textContent = '⚠️ Phone must be 10 digits';
+    document.getElementById('fmsg').style.display='block'; return;
+  }
+  const btn = document.getElementById('submitBtn');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Submitting…';
+  const callData = {
+    hospitalName:     document.getElementById('hospitalName').value,
+    contactPerson:    document.getElementById('contactPerson').value.trim(),
+    phoneNumber:      document.getElementById('phoneNumber').value.trim(),
+    email:            document.getElementById('hospEmail').value.trim(),
+    city:             document.getElementById('city').value.trim(),
+    model:            document.getElementById('model').value.trim(),
+    serialNumber:     document.getElementById('serialNumber').value.trim(),
+    warrantyStatus:   document.getElementById('warrantyStatus').value,
+    serviceType:      document.getElementById('serviceType').value,
+    urgency:          document.getElementById('urgency').value,
+    scheduledDate:    document.getElementById('scheduledDate').value,
+    scheduledTime:    document.getElementById('scheduledTime').value,
+    issueDescription: document.getElementById('issueDescription').value.trim(),
+    assignedEngineer: document.getElementById('assignedEngineer').value,
+    estDuration:      document.getElementById('estDuration').value||''
+  };
+  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'logServiceCall',callData})
+  }).then(() => {
+    btn.disabled=false; btn.innerHTML='✅ Submit Service Call';
+    closeNew();
+    msg('msgOk', `✅ Service call logged for ${callData.hospitalName}! Engineer ${callData.assignedEngineer} notified.`);
+    setTimeout(loadCalls, 1500);
+  }).catch(() => {
+    btn.disabled=false; btn.innerHTML='✅ Submit Service Call';
+    document.getElementById('fmsg').textContent='❌ Submission failed. Please try again.';
+    document.getElementById('fmsg').style.display='block';
+  });
+}
+
+// ── Status Modal ───────────────────────────────────────────────
+function openStatus(callId, hospital) {
+  document.getElementById('statusCallId').value = callId;
+  document.getElementById('statusLabel').textContent = callId + ' — ' + hospital;
+  document.getElementById('ovStatus').classList.add('show');
+}
+function closeStatus() { document.getElementById('ovStatus').classList.remove('show'); }
+function setStatus(newStatus) {
+  const callId = document.getElementById('statusCallId').value;
+  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'updateCallStatus',callId,status:newStatus})
+  }).then(() => {
+    closeStatus();
+    msg('msgOk', `✅ ${callId} updated to "${newStatus}"`);
+    setTimeout(loadCalls, 1200);
+  });
+}
+
+// ── Init ───────────────────────────────────────────────────────
+window.onload = () => { loadCalls(); loadFormData(); };
+</script>
 </body>
 </html>
