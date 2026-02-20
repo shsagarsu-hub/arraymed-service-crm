@@ -571,7 +571,11 @@ function renderTable(calls) {
       <td>
         ${(c.Status||'').toLowerCase() === 'engineer completed'
           ? `<button class="btn-upd" style="background:linear-gradient(135deg,#e67e22,#d68910);"
-               onclick="openReview('${esc(c['Call ID'])}','${esc(c['Hospital Name'])}',\'${esc(c.reportUrl||'')}\',\'${esc(c.videoUrl||'')}\')">
+               data-callid="${esc(c['Call ID'])}"
+               data-hospital="${esc(c['Hospital Name'])}"
+               data-report="${esc(c['Report URL']||c.reportUrl||c['Report Url']||'')}"
+               data-video="${esc(c['Video URL']||c.videoUrl||c['Video Url']||'')}"
+               onclick="openReviewFromBtn(this)">
                📋 Review Report
              </button>`
           : `<button class="btn-upd" onclick="openStatus('${esc(c['Call ID'])}','${esc(c['Hospital Name'])}')">✏️ Update</button>`
@@ -750,6 +754,14 @@ function setStatus(newStatus) {
 }
 
 // ── Review Report ────────────────────────────────────────────
+function openReviewFromBtn(btn) {
+  const callId    = btn.getAttribute('data-callid');
+  const hospital  = btn.getAttribute('data-hospital');
+  const reportUrl = btn.getAttribute('data-report') || '';
+  const videoUrl  = btn.getAttribute('data-video')  || '';
+  openReview(callId, hospital, reportUrl, videoUrl);
+}
+
 function openReview(callId, hospital, reportUrl, videoUrl) {
   document.getElementById('reviewCallId').value = callId;
   document.getElementById('reviewLabel').textContent = callId + ' — ' + hospital;
@@ -757,18 +769,25 @@ function openReview(callId, hospital, reportUrl, videoUrl) {
   document.getElementById('remarkText').value = '';
   document.getElementById('reviewMsg').style.display = 'none';
 
-  // Build download links
+  // Build download links - handle any URL format
   const dlRow = document.getElementById('downloadRow');
   let dlHtml = '';
-  if (reportUrl && reportUrl !== 'undefined' && reportUrl !== '') {
+  const hasReport = reportUrl && reportUrl.trim() !== '' && reportUrl !== 'undefined' && reportUrl !== 'null';
+  const hasVideo  = videoUrl  && videoUrl.trim()  !== '' && videoUrl  !== 'undefined' && videoUrl  !== 'null';
+  if (hasReport) {
     dlHtml += `<a class="btn-dl" href="${reportUrl}" target="_blank">📄 Download Service Report</a>`;
   } else {
-    dlHtml += `<span style="font-size:12px;color:#8b7355;background:#f5ede0;padding:8px 14px;border-radius:8px;">📄 No report file uploaded</span>`;
+    dlHtml += `<span style="font-size:12px;color:#8b7355;background:#f5ede0;padding:8px 14px;border-radius:8px;display:inline-block;">📄 No report uploaded yet</span>`;
   }
-  if (videoUrl && videoUrl !== 'undefined' && videoUrl !== '') {
+  if (hasVideo) {
     dlHtml += `<a class="btn-dl" href="${videoUrl}" target="_blank">📹 Download Video</a>`;
   } else {
-    dlHtml += `<span style="font-size:12px;color:#8b7355;background:#f5ede0;padding:8px 14px;border-radius:8px;">📹 No video uploaded</span>`;
+    dlHtml += `<span style="font-size:12px;color:#8b7355;background:#f5ede0;padding:8px 14px;border-radius:8px;display:inline-block;">📹 No video uploaded yet</span>`;
+  }
+  if (!hasReport && !hasVideo) {
+    dlHtml += `<div style="width:100%;margin-top:8px;font-size:12px;color:#8b7355;">
+      ℹ️ Files are uploaded via the engineer app. If missing, the engineer may not have attached files when submitting.
+    </div>`;
   }
   dlRow.innerHTML = dlHtml;
   document.getElementById('ovReview').classList.add('show');
