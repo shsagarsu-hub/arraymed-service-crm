@@ -208,6 +208,9 @@
     <div class="tab active" id="tab-active" onclick="showTab('active')">
       🔥 Active (<span id="activeCount">0</span>)
     </div>
+    <div class="tab" id="tab-waiting" onclick="showTab('waiting')">
+      ⏳ Pending Review (<span id="waitingCount">0</span>)
+    </div>
     <div class="tab" id="tab-done" onclick="showTab('done')">
       ✅ Completed (<span id="doneCount">0</span>)
     </div>
@@ -219,6 +222,15 @@
       <div id="activeList"></div>
     </div>
   </div>
+  <div id="waitingTab" class="tab-content">
+    <div class="container">
+      <p style="font-size:13px;color:#8b7355;background:#fef3e2;padding:12px 16px;border-radius:10px;
+                margin-bottom:14px;border-left:4px solid #d68910;">
+        ⏳ These calls are submitted and waiting for the coordinator to review and accept.
+      </p>
+      <div id="waitingList"></div>
+    </div>
+  </div>
   <div id="doneTab" class="tab-content">
     <div class="container">
       <div id="doneList"></div>
@@ -228,6 +240,9 @@
   <div class="bot-nav">
     <button class="nav-btn active" id="nav-active" onclick="showTab('active')">
       <span class="nav-icon">🔥</span>Active
+    </button>
+    <button class="nav-btn" id="nav-waiting" onclick="showTab('waiting')">
+      <span class="nav-icon">⏳</span>Review
     </button>
     <button class="nav-btn" onclick="loadCalls()">
       <span class="nav-icon">🔄</span>Refresh
@@ -297,14 +312,14 @@
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn-submit" id="rSubmitBtn" onclick="submitReport()">✅ Submit & Mark Completed</button>
+      <button class="btn-submit" id="rSubmitBtn" onclick="submitReport()">✅ Submit Report to Coordinator</button>
     </div>
   </div>
 </div>
 
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbzca5L9cuMVPZybJR5fQqCktgrhCGF1CPF_dssoWEiuEnOrF4fZOsyAHHPa3I2mbG64/exec';
-let engineer = null, activeCalls = [], doneCalls = [];
+let engineer = null, activeCalls = [], waitingCalls = [], doneCalls = [];
 
 // ── Utils ─────────────────────────────────────────────────────
 function jsonp(url, cb) {
@@ -372,7 +387,10 @@ function loadCalls() {
     const all = (res.data.calls || []).filter(c => c['Assigned Engineer'] === engineer);
     activeCalls = all.filter(c => {
       const s = (c.Status||'').toLowerCase().trim();
-      return !['completed','cancelled','closed'].includes(s);
+      return ['assigned','in progress','reopened'].includes(s) || !c.Status;
+    });
+    waitingCalls = all.filter(c => {
+      return (c.Status||'').toLowerCase().trim() === 'engineer completed';
     });
     doneCalls = all.filter(c => {
       const s = (c.Status||'').toLowerCase().trim();
@@ -380,6 +398,7 @@ function loadCalls() {
     });
     updateStats(all);
     renderActive();
+    renderWaiting();
     renderDone();
   });
 }
@@ -387,8 +406,9 @@ function updateStats(all) {
   document.getElementById('stTotal').textContent  = all.length;
   document.getElementById('stActive').textContent = activeCalls.length;
   document.getElementById('stDone').textContent   = doneCalls.length;
-  document.getElementById('activeCount').textContent = activeCalls.length;
-  document.getElementById('doneCount').textContent   = doneCalls.length;
+  document.getElementById('activeCount').textContent  = activeCalls.length;
+  document.getElementById('waitingCount').textContent = waitingCalls.length;
+  document.getElementById('doneCount').textContent    = doneCalls.length;
 }
 function renderActive() {
   const el = document.getElementById('activeList');
@@ -407,12 +427,34 @@ function renderActive() {
       <div class="call-row"><strong>Contact:</strong> ${c['Contact Person']||''} · ${c['Phone Number']||''}</div>
       <div class="call-row"><strong>Scheduled:</strong> ${c['Scheduled Date']||''} ${c['Scheduled Time']?'at '+c['Scheduled Time']:''}</div>
       <div class="call-row"><strong>Status:</strong> <span class="badge ${badgeCls(c.Status)}">${c.Status||'Assigned'}</span></div>
+      ${c['Coordinator Remark'] ? `<div style="background:#fde8e8;border-left:3px solid #e74c3c;padding:8px 12px;border-radius:8px;margin-top:6px;font-size:12px;color:#c0392b;"><strong>📝 Coordinator Remark:</strong> ${c['Coordinator Remark']}</div>` : ''}
       <div class="card-actions">
         <button class="btn-nav" onclick="navigate('${(c['Hospital Name']||'').replace(/'/g,"\\'")}','${(c.City||'').replace(/'/g,"\\'")}')">🗺️ Navigate</button>
         <button class="btn-report" onclick="openReport('${(c['Call ID']||'').replace(/'/g,"\\'")}')">📤 Submit Report</button>
       </div>
     </div>`).join('');
 }
+function renderWaiting() {
+  const el = document.getElementById('waitingList');
+  if (!waitingCalls.length) {
+    el.innerHTML = `<div class="empty"><div class="icon">⏳</div>
+      <h3>Nothing pending review</h3><p>Submitted reports will appear here.</p></div>`;
+    return;
+  }
+  el.innerHTML = waitingCalls.map(c => `
+    <div class="call-card" style="border-left-color:#d68910;background:#fffdf5;">
+      <div style="font-size:11px;font-weight:800;background:#fef3e2;color:#d68910;
+                  padding:4px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;">
+        ⏳ Awaiting Coordinator Review
+      </div>
+      <div class="call-id">${c['Call ID']||''}</div>
+      <div class="call-hosp">${c['Hospital Name']||''}</div>
+      <div class="call-row"><strong>Equipment:</strong> ${c['Equipment Model']||''}</div>
+      <div class="call-row"><strong>Type:</strong> ${c['Service Type']||''}</div>
+      <div class="call-row"><strong>Scheduled:</strong> ${c['Scheduled Date']||''}</div>
+    </div>`).join('');
+}
+
 function renderDone() {
   const el = document.getElementById('doneList');
   if (!doneCalls.length) {
@@ -435,10 +477,11 @@ function renderDone() {
 
 // ── Tabs ───────────────────────────────────────────────────────
 function showTab(tab) {
-  ['active','done'].forEach(t => {
+  ['active','waiting','done'].forEach(t => {
     document.getElementById(t+'Tab').classList.toggle('active', t===tab);
     document.getElementById('tab-'+t).classList.toggle('active', t===tab);
-    document.getElementById('nav-'+t) && document.getElementById('nav-'+t).classList.toggle('active', t===tab);
+    const nb = document.getElementById('nav-'+t);
+    if (nb) nb.classList.toggle('active', t===tab);
   });
 }
 
@@ -457,7 +500,7 @@ function openReport(callId) {
   document.getElementById('rFilePrev').style.display = 'none';
   document.getElementById('rVideoPrev').style.display = 'none';
   document.getElementById('rSubmitBtn').disabled = false;
-  document.getElementById('rSubmitBtn').textContent = '✅ Submit & Mark Completed';
+  document.getElementById('rSubmitBtn').textContent = '✅ Submit Report';
   document.getElementById('reportOv').classList.add('show');
 }
 function closeReport() { document.getElementById('reportOv').classList.remove('show'); }
@@ -498,7 +541,7 @@ function submitReport() {
     }})
   }).then(() =>
     fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'updateCallStatus',callId,status:'Completed'})
+      body:JSON.stringify({action:'updateCallStatus',callId,status:'Engineer Completed'})
     })
   ).then(() => {
     closeReport();
