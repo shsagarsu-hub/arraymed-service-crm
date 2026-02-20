@@ -418,7 +418,8 @@ function renderActive() {
     return;
   }
   el.innerHTML = activeCalls.map(c => `
-    <div class="call-card ${c.Urgency==='Critical'?'critical':''}">
+    <div class="call-card ${c.Urgency==='Critical'?'critical':''}" style="${(c.Status||'').toLowerCase()==='reopened'?'border-left-color:#e74c3c;background:#fff8f5;':''}">
+      ${(c.Status||'').toLowerCase()==='reopened' ? `<div style="background:#e74c3c;color:#fff;font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;display:inline-block;margin-bottom:10px;letter-spacing:.5px;">🔄 REOPENED BY COORDINATOR</div>` : ''}
       <div class="call-id">${c['Call ID']||''}</div>
       <div class="call-hosp">${c['Hospital Name']||''}</div>
       <div class="call-row"><strong>Equipment:</strong> ${c['Equipment Model']||''} ${c['Serial Number']?'· '+c['Serial Number']:''}</div>
@@ -545,9 +546,13 @@ function submitReport() {
     })
   ).then(() => {
     closeReport();
-    alert('✅ Report submitted!\n\nCosts:\nParts: ₹'+parts+'\nLabour: ₹'+labour+'\nTravel: ₹'+travel+
-          '\nTotal: ₹'+(parseFloat(parts)+parseFloat(labour)+parseFloat(travel)).toFixed(2));
-    setTimeout(loadCalls, 1000);
+    closeReport();
+    // After submitting, switch to Pending Review tab
+    setTimeout(() => {
+      loadCalls();
+      setTimeout(() => showTab('waiting'), 800);
+    }, 500);
+    alert('✅ Report submitted to coordinator!\n\nTotal Cost: ₹'+(parseFloat(parts)+parseFloat(labour)+parseFloat(travel)).toFixed(2)+'\n\nYou can track it in the "Pending Review" tab.');
   }).catch(() => {
     btn.disabled=false; btn.textContent='✅ Submit & Mark Completed';
     alert('❌ Submission failed. Please try again.');
