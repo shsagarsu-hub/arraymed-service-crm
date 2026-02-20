@@ -93,6 +93,8 @@
     .b-outofwarranty{background:#fde8e8;color:#c0392b;}
     .b-amc{background:#e8eaf6;color:#3949ab;}
     .b-tobechecked{background:#f5f0e8;color:#8b7355;}
+    .b-engineercompleted{background:#fff3cd;color:#856404;border:1px solid #ffc107;}
+    .b-reopened{background:#fde8e8;color:#c0392b;}
     .btn-upd{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;
              padding:5px 12px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:700;
              font-family:inherit;transition:all .2s;}
@@ -158,6 +160,29 @@
                 cursor:pointer;font-weight:700;font-size:13px;transition:all .2s;background:#fffdf9;color:#2c2116;}
     .status-opt:hover{border-color:#667eea;background:#f0f0ff;color:#667eea;}
 
+    /* ── REVIEW MODAL ── */
+    .remark-box{background:#fff8f0;border:2px solid #e8ddd0;border-radius:10px;padding:14px;margin-top:14px;}
+    .remark-box label{font-size:11px;font-weight:700;color:#b5451b;text-transform:uppercase;
+                      letter-spacing:.5px;display:block;margin-bottom:6px;}
+    .remark-box textarea{width:100%;padding:10px;border:2px solid #e8ddd0;border-radius:8px;
+                          font-size:13px;font-family:inherit;color:#2c2116;background:#fffdf9;
+                          min-height:80px;resize:vertical;}
+    .remark-box textarea:focus{outline:none;border-color:#b5451b;}
+    .review-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+    .btn-accept{padding:13px;border:none;border-radius:10px;font-weight:800;font-size:14px;
+                cursor:pointer;font-family:inherit;
+                background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;transition:all .2s;}
+    .btn-accept:hover{transform:translateY(-1px);}
+    .btn-reopen{padding:13px;border:none;border-radius:10px;font-weight:800;font-size:14px;
+                cursor:pointer;font-family:inherit;
+                background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;transition:all .2s;}
+    .btn-reopen:hover{transform:translateY(-1px);}
+    .download-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+    .btn-dl{background:#fffdf9;border:2px solid #667eea;color:#667eea;padding:8px 16px;
+            border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;
+            font-family:inherit;transition:all .2s;text-decoration:none;display:inline-block;}
+    .btn-dl:hover{background:#667eea;color:#fff;}
+
     /* ── SPINNER ── */
     .spin{border:3px solid #ede4d8;border-top-color:#667eea;border-radius:50%;
           width:14px;height:14px;animation:spin .8s linear infinite;display:inline-block;
@@ -216,6 +241,7 @@
       <select class="fsel" id="fSta" onchange="applyFilters()">
         <option value="">All Status</option>
         <option>Assigned</option><option>In Progress</option>
+        <option>Engineer Completed</option><option>Reopened</option>
         <option>Completed</option><option>On Hold</option><option>Cancelled</option>
       </select>
       <select class="fsel" id="fTyp" onchange="applyFilters()">
@@ -376,6 +402,45 @@
   </div>
 </div>
 
+<!-- REVIEW REPORT MODAL -->
+<div class="ov" id="ovReview">
+  <div class="modal">
+    <div class="modal-hdr" style="background:linear-gradient(135deg,#e67e22,#d68910);">
+      <h2>📋 Review Engineer Report</h2>
+      <button class="modal-close" onclick="closeReview()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="reviewMsg" class="msg msg-err"></div>
+      <input type="hidden" id="reviewCallId">
+
+      <p style="font-size:13px;color:#8b7355;margin-bottom:4px;">Service call:</p>
+      <p style="font-weight:800;font-size:15px;color:#2c2116;margin-bottom:16px;" id="reviewLabel"></p>
+
+      <div style="background:#fff8f0;border-radius:12px;padding:14px;border:2px solid #ede4d8;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:800;color:#b5451b;text-transform:uppercase;
+                    letter-spacing:.6px;margin-bottom:10px;">📥 Engineer's Submission</div>
+        <div class="download-row" id="downloadRow">
+          <span style="font-size:13px;color:#8b7355;">Loading attachments…</span>
+        </div>
+      </div>
+
+      <div style="font-size:13px;color:#4a3728;font-weight:700;margin-bottom:8px;">Your Decision:</div>
+      <div class="review-actions">
+        <button class="btn-accept" onclick="acceptCall()">✅ Accept & Complete</button>
+        <button class="btn-reopen" onclick="showRemarkBox()">🔄 Reopen with Remark</button>
+      </div>
+
+      <div class="remark-box" id="remarkBox" style="display:none;">
+        <label>Remark for Engineer <span style="color:#b5451b;">*</span></label>
+        <textarea id="remarkText" placeholder="Describe what needs to be fixed or redone…"></textarea>
+        <button class="btn-reopen" style="width:100%;margin-top:10px;" onclick="submitReopen()">
+          🔄 Send Back to Engineer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- STATUS UPDATE MODAL -->
 <div class="ov" id="ovStatus">
   <div class="modal" style="max-width:420px;">
@@ -389,10 +454,13 @@
       <p style="font-weight:800;font-size:15px;color:#2c2116;margin-bottom:18px;" id="statusLabel"></p>
       <div class="status-grid">
         <div class="status-opt" onclick="setStatus('In Progress')">🚀 In Progress</div>
-        <div class="status-opt" onclick="setStatus('Completed')">✅ Completed</div>
         <div class="status-opt" onclick="setStatus('On Hold')">⏸️ On Hold</div>
         <div class="status-opt" onclick="setStatus('Cancelled')">❌ Cancelled</div>
+        <div class="status-opt" onclick="setStatus('Assigned')">🔄 Re-assign</div>
       </div>
+      <p style="font-size:11px;color:#8b7355;margin-top:10px;text-align:center;">
+        ℹ️ To complete a call, use the <strong>Review Report</strong> button after engineer submits.
+      </p>
     </div>
   </div>
 </div>
@@ -419,7 +487,7 @@ function badgeCls(val, type) {
   const v = (val||'').toLowerCase().replace(/[\s-]/g,'');
   const maps = {
     urg: {critical:'b-critical',high:'b-high',low:'b-low',normal:'b-normal'},
-    sta: {completed:'b-completed',inprogress:'b-inprogress',onhold:'b-onhold',cancelled:'b-cancelled',assigned:'b-assigned'},
+    sta: {completed:'b-completed',inprogress:'b-inprogress',onhold:'b-onhold',cancelled:'b-cancelled',assigned:'b-assigned','engineercompleted':'b-engineercompleted',reopened:'b-reopened'},
     war: {inwarranty:'b-inwarranty',outofwarranty:'b-outofwarranty',amc:'b-amc',tobechecked:'b-tobechecked'}
   };
   return (maps[type]||{})[v] || 'b-normal';
@@ -500,7 +568,15 @@ function renderTable(calls) {
       </td>
       <td><span class="badge ${badgeCls(c['Warranty Status'],'war')}">${c['Warranty Status']||'TBC'}</span></td>
       <td><span class="badge ${badgeCls(c.Status,'sta')}">${c.Status||'Assigned'}</span></td>
-      <td><button class="btn-upd" onclick="openStatus('${esc(c['Call ID'])}','${esc(c['Hospital Name'])}')">✏️ Update</button></td>
+      <td>
+        ${(c.Status||'').toLowerCase() === 'engineer completed'
+          ? `<button class="btn-upd" style="background:linear-gradient(135deg,#e67e22,#d68910);"
+               onclick="openReview('${esc(c['Call ID'])}','${esc(c['Hospital Name'])}',\'${esc(c.reportUrl||'')}\',\'${esc(c.videoUrl||'')}\')">
+               📋 Review Report
+             </button>`
+          : `<button class="btn-upd" onclick="openStatus('${esc(c['Call ID'])}','${esc(c['Hospital Name'])}')">✏️ Update</button>`
+        }
+      </td>
     </tr>`).join('');
 }
 
@@ -669,6 +745,61 @@ function setStatus(newStatus) {
   }).then(() => {
     closeStatus();
     msg('msgOk', `✅ ${callId} updated to "${newStatus}"`);
+    setTimeout(loadCalls, 1200);
+  });
+}
+
+// ── Review Report ────────────────────────────────────────────
+function openReview(callId, hospital, reportUrl, videoUrl) {
+  document.getElementById('reviewCallId').value = callId;
+  document.getElementById('reviewLabel').textContent = callId + ' — ' + hospital;
+  document.getElementById('remarkBox').style.display = 'none';
+  document.getElementById('remarkText').value = '';
+  document.getElementById('reviewMsg').style.display = 'none';
+
+  // Build download links
+  const dlRow = document.getElementById('downloadRow');
+  let dlHtml = '';
+  if (reportUrl && reportUrl !== 'undefined' && reportUrl !== '') {
+    dlHtml += `<a class="btn-dl" href="${reportUrl}" target="_blank">📄 Download Service Report</a>`;
+  } else {
+    dlHtml += `<span style="font-size:12px;color:#8b7355;background:#f5ede0;padding:8px 14px;border-radius:8px;">📄 No report file uploaded</span>`;
+  }
+  if (videoUrl && videoUrl !== 'undefined' && videoUrl !== '') {
+    dlHtml += `<a class="btn-dl" href="${videoUrl}" target="_blank">📹 Download Video</a>`;
+  } else {
+    dlHtml += `<span style="font-size:12px;color:#8b7355;background:#f5ede0;padding:8px 14px;border-radius:8px;">📹 No video uploaded</span>`;
+  }
+  dlRow.innerHTML = dlHtml;
+  document.getElementById('ovReview').classList.add('show');
+}
+function closeReview() { document.getElementById('ovReview').classList.remove('show'); }
+function showRemarkBox() {
+  document.getElementById('remarkBox').style.display = 'block';
+  document.getElementById('remarkText').focus();
+}
+function acceptCall() {
+  const callId = document.getElementById('reviewCallId').value;
+  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'updateCallStatus',callId,status:'Completed'})
+  }).then(() => {
+    closeReview();
+    msg('msgOk', `✅ ${callId} accepted and marked as Completed.`);
+    setTimeout(loadCalls, 1200);
+  });
+}
+function submitReopen() {
+  const callId = document.getElementById('reviewCallId').value;
+  const remark = document.getElementById('remarkText').value.trim();
+  if (!remark) {
+    document.getElementById('reviewMsg').textContent = '⚠️ Please enter a remark for the engineer.';
+    document.getElementById('reviewMsg').style.display = 'block'; return;
+  }
+  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'reopenCall',callId,remark,status:'Reopened'})
+  }).then(() => {
+    closeReview();
+    msg('msgOk', `🔄 ${callId} sent back to engineer with your remark.`);
     setTimeout(loadCalls, 1200);
   });
 }
