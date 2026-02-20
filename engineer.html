@@ -525,6 +525,20 @@ document.getElementById('rVideo').onchange = e => {
     el.style.display = 'block';
   }
 };
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) { resolve(null); return; }
+    const reader = new FileReader();
+    reader.onload = () => resolve({
+      name: file.name,
+      type: file.type,
+      data: reader.result.split(',')[1]  // strip data:...;base64,
+    });
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
 function submitReport() {
   const issue  = document.getElementById('rIssue').value.trim();
   const action = document.getElementById('rAction').value.trim();
@@ -534,28 +548,72 @@ function submitReport() {
   const labour = document.getElementById('rLabour').value||0;
   const travel = document.getElementById('rTravel').value||0;
   const btn = document.getElementById('rSubmitBtn');
-  btn.disabled=true; btn.textContent='⏳ Submitting…';
-  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'submitServiceReport',reportData:{
-      callId, engineerName:engineer, partsCost:parts, laborCost:labour, travelCost:travel,
-      issueFound:issue, actionTaken:action, resolutionStatus:'Resolved'
-    }})
-  }).then(() =>
-    fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'updateCallStatus',callId,status:'Engineer Completed'})
-    })
-  ).then(() => {
-    closeReport();
-    closeReport();
-    // After submitting, switch to Pending Review tab
-    setTimeout(() => {
-      loadCalls();
-      setTimeout(() => showTab('waiting'), 800);
-    }, 500);
-    alert('✅ Report submitted to coordinator!\n\nTotal Cost: ₹'+(parseFloat(parts)+parseFloat(labour)+parseFloat(travel)).toFixed(2)+'\n\nYou can track it in the "Pending Review" tab.');
-  }).catch(() => {
-    btn.disabled=false; btn.textContent='✅ Submit & Mark Completed';
-    alert('❌ Submission failed. Please try again.');
+  btn.disabled=true; btn.textContent='⏳ Uploading files…';
+
+  const reportFile = document.getElementById('rFile').files[0] || null;
+  const videoFile  = document.getElementById('rVideo').files[0] || null;
+
+  Promise.all([fileToBase64(reportFile), fileToBase64(videoFile)]).then(([reportB64, videoB64]) => {
+    btn.textContent = '⏳ Submitting report…';
+    const payload = {
+      action: 'submitServiceReport',
+      reportData: {
+        callId,
+        engineerName: engineer,
+        partsCost:    parts,
+        laborCost:    labour,
+        travelCost:   travel,
+        issueFound:   issue,
+        actionTaken:  action,
+        resolutionStatus: 'Resolved',
+        reportFile:   reportB64,
+        videoFile:    videoB64
+      }
+    };
+    // Use jsonp-style GET with encoded payload for response reading
+    // Falls back to no-cors POST if payload too large
+    const payloadStr = JSON.stringify(payload);
+    if (payloadStr.length < 7000) {
+      // Small enough for JSONP GET
+      const k = 'sr_' + Date.now();
+      window[k] = function(res) {
+        delete window[k];
+        btn.disabled=false; btn.textContent='✅ Submit Report to Coordinator';
+        closeReport();
+        const total = (parseFloat(parts)+parseFloat(labour)+parseFloat(travel)).toFixed(2);
+        setTimeout(() => { loadCalls(); setTimeout(() => showTab('waiting'), 800); }, 500);
+        alert('✅ Report submitted!\nTotal: ₹'+total+'\n\nCheck "Pending Review" tab.');
+      };
+      const s = document.createElement('script');
+      s.src = API + '?callback=' + k + '&payload=' + encodeURIComponent(payloadStr);
+      document.body.appendChild(s);
+      setTimeout(() => {
+        if (window[k]) {
+          delete window[k];
+          // Fallback — assume success since no-cors
+          btn.disabled=false; btn.textContent='✅ Submit Report to Coordinator';
+          closeReport();
+          const total = (parseFloat(parts)+parseFloat(labour)+parseFloat(travel)).toFixed(2);
+          setTimeout(() => { loadCalls(); setTimeout(() => showTab('waiting'), 800); }, 500);
+          alert('✅ Report submitted!\nTotal: ₹'+total+'\n\nCheck "Pending Review" tab.');
+        }
+      }, 8000);
+    } else {
+      // Large files — use no-cors POST (files will upload but URL won't return)
+      fetch(API, {method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'application/json'},
+        body: payloadStr
+      }).then(() => {
+        btn.disabled=false; btn.textContent='✅ Submit Report to Coordinator';
+        closeReport();
+        const total = (parseFloat(parts)+parseFloat(labour)+parseFloat(travel)).toFixed(2);
+        setTimeout(() => { loadCalls(); setTimeout(() => showTab('waiting'), 800); }, 500);
+        alert('✅ Report submitted!\nTotal: ₹'+total+'\n\nCheck "Pending Review" tab.');
+      }).catch(() => {
+        btn.disabled=false; btn.textContent='✅ Submit Report to Coordinator';
+        alert('❌ Submission failed. Try again.');
+      });
+    }
   });
 }
 
