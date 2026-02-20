@@ -243,6 +243,13 @@
         ✅ Completed <span id="completedCountBadge"
           style="background:#e8ddd0;color:#8b7355;padding:2px 8px;border-radius:20px;margin-left:6px;font-size:11px;">—</span>
       </button>
+      <button id="tabPmc" onclick="switchMainTab('pmc')"
+        style="padding:14px 28px;border:none;border-bottom:3px solid transparent;
+               background:#fffdf9;color:#8b7355;font-weight:800;font-size:13px;cursor:pointer;
+               font-family:inherit;transition:all .2s;">
+        🔄 PMC Contracts <span id="pmcCountBadge"
+          style="background:#e8ddd0;color:#8b7355;padding:2px 8px;border-radius:20px;margin-left:6px;font-size:11px;">—</span>
+      </button>
     </div>
 
     <!-- ACTIVE SECTION -->
@@ -325,6 +332,206 @@
       </thead>
       <tbody id="completedBody"></tbody>
     </table>
+  </div>
+</div>
+
+<!-- PMC CONTRACTS SECTION -->
+<div id="pmcSection" style="display:none;padding:20px;">
+
+  <!-- Stats row -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+    <div style="background:#fff8f0;border-radius:10px;padding:14px;border-left:4px solid #b5451b;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:#b5451b;" id="pmcStatTotal">—</div>
+      <div style="font-size:11px;color:#8b7355;font-weight:600;margin-top:2px;">Active Contracts</div>
+    </div>
+    <div style="background:#fff3e0;border-radius:10px;padding:14px;border-left:4px solid #e67e22;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:#e67e22;" id="pmcStatDue">—</div>
+      <div style="font-size:11px;color:#8b7355;font-weight:600;margin-top:2px;">Visits Due (30 days)</div>
+    </div>
+    <div style="background:#fff0f0;border-radius:10px;padding:14px;border-left:4px solid #e74c3c;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:#e74c3c;" id="pmcStatExpiring">—</div>
+      <div style="font-size:11px;color:#8b7355;font-weight:600;margin-top:2px;">Expiring (60 days)</div>
+    </div>
+    <div style="background:#f0fff4;border-radius:10px;padding:14px;border-left:4px solid #27ae60;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:#27ae60;" id="pmcStatValue">—</div>
+      <div style="font-size:11px;color:#8b7355;font-weight:600;margin-top:2px;">Total Contract Value</div>
+    </div>
+  </div>
+
+  <!-- Header + Add button -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <h3 style="font-size:16px;font-weight:800;color:#2c2116;">🔄 PMC Contracts</h3>
+    <div style="display:flex;gap:10px;">
+      <input type="text" id="pmcSearch" placeholder="🔍 Search contracts…"
+        oninput="renderPmcTable()"
+        style="padding:8px 14px;border:2px solid #e8ddd0;border-radius:8px;font-size:13px;
+               font-family:inherit;background:#fffdf9;color:#2c2116;width:220px;">
+      <select id="pmcFilter" onchange="renderPmcTable()"
+        style="padding:8px 12px;border:2px solid #e8ddd0;border-radius:8px;font-size:13px;
+               font-family:inherit;background:#fffdf9;color:#2c2116;">
+        <option value="">All Contracts</option>
+        <option value="active">Active</option>
+        <option value="expiring">Expiring Soon</option>
+        <option value="expired">Expired</option>
+      </select>
+      <button onclick="openPmcModal()"
+        style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;
+               padding:9px 18px;border-radius:9px;font-size:13px;font-weight:700;
+               cursor:pointer;font-family:inherit;">
+        ➕ Add Contract
+      </button>
+    </div>
+  </div>
+
+  <div id="pmcNoData" style="text-align:center;padding:40px;color:#8b7355;display:none;">
+    <div style="font-size:32px;margin-bottom:10px;">🔄</div>
+    <div style="font-weight:700;">No PMC contracts yet</div>
+    <div style="font-size:13px;margin-top:4px;">Add a contract to start tracking preventive maintenance visits</div>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;">
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Contract ID</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Hospital</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Equipment</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Frequency</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Start</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Expiry</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Next Visit</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Value (₹)</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Status</th>
+          <th style="padding:10px 14px;text-align:left;font-weight:800;">Action</th>
+        </tr>
+      </thead>
+      <tbody id="pmcBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ADD PMC CONTRACT MODAL -->
+<div class="ov" id="ovPmc">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-hdr" style="background:linear-gradient(135deg,#667eea,#764ba2);">
+      <h2>🔄 Add PMC Contract</h2>
+      <button class="modal-close" onclick="closePmcModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="pmcFormMsg" class="msg msg-err"></div>
+
+      <div class="fsec">
+        <div class="fsec-title">🏥 Hospital & Equipment</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label>Hospital Name <span class="req">*</span></label>
+            <select id="pmcHospital" onchange="autoFillPmcHospital()" required>
+              <option value="">— Select Hospital —</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Contact Person</label>
+            <input type="text" id="pmcContact" placeholder="Auto-filled">
+          </div>
+          <div class="fg">
+            <label>Phone</label>
+            <input type="text" id="pmcPhone" placeholder="Auto-filled">
+          </div>
+          <div class="fg">
+            <label>Equipment Model <span class="req">*</span></label>
+            <select id="pmcModel" required>
+              <option value="">— Select Equipment —</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title">📋 Contract Details</div>
+        <div class="fgrid">
+          <div class="fg">
+            <label>Visit Frequency <span class="req">*</span></label>
+            <select id="pmcFrequency" required>
+              <option value="">— Select Frequency —</option>
+              <option value="Monthly">Monthly (12 visits/year)</option>
+              <option value="Quarterly">Quarterly (4 visits/year)</option>
+              <option value="Half-yearly">Half-yearly (2 visits/year)</option>
+              <option value="Yearly">Yearly (1 visit/year)</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Contract Value (₹) <span class="req">*</span></label>
+            <input type="number" id="pmcValue" placeholder="e.g. 25000" min="0">
+          </div>
+          <div class="fg">
+            <label>Start Date <span class="req">*</span></label>
+            <input type="date" id="pmcStartDate" required>
+          </div>
+          <div class="fg">
+            <label>End Date <span class="req">*</span></label>
+            <input type="date" id="pmcEndDate" required>
+          </div>
+        </div>
+        <div class="fgrid one" style="margin-top:12px;">
+          <div class="fg">
+            <label>Assign Engineer for PMC Visits</label>
+            <select id="pmcEngineer">
+              <option value="">— Assign later —</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgrid one" style="margin-top:12px;">
+          <div class="fg">
+            <label>Notes</label>
+            <textarea id="pmcNotes" placeholder="Any special maintenance instructions…" style="height:70px;"></textarea>
+          </div>
+        </div>
+        <div class="fgrid one" style="margin-top:12px;">
+          <div class="fg">
+            <label>Upload Contract Document <span style="color:#8b7355;font-weight:400;">(PDF, image — optional)</span></label>
+            <div id="pmcDropZone"
+              style="border:2px dashed #c9b99a;border-radius:10px;padding:20px;text-align:center;
+                     cursor:pointer;background:#fffdf9;transition:all .2s;"
+              onclick="document.getElementById('pmcContractFile').click()"
+              ondragover="event.preventDefault();this.style.borderColor='#667eea';this.style.background='#f0f4ff';"
+              ondragleave="this.style.borderColor='#c9b99a';this.style.background='#fffdf9';"
+              ondrop="handlePmcFileDrop(event)">
+              <div style="font-size:24px;margin-bottom:6px;">📄</div>
+              <div style="font-size:13px;font-weight:600;color:#5a4030;">Click or drag contract file here</div>
+              <div style="font-size:11px;color:#8b7355;margin-top:4px;">PDF, JPG, PNG — max 10MB</div>
+            </div>
+            <input type="file" id="pmcContractFile" accept=".pdf,.jpg,.jpeg,.png"
+              style="display:none;" onchange="handlePmcFileSelect(this)">
+            <div id="pmcFilePreview" style="display:none;margin-top:10px;padding:10px 14px;
+              background:#f0f4ff;border-radius:8px;border:1px solid #667eea;
+              display:none;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span id="pmcFileIcon" style="font-size:18px;">📄</span>
+                <div>
+                  <div id="pmcFileName" style="font-size:13px;font-weight:700;color:#2c2116;"></div>
+                  <div id="pmcFileSize" style="font-size:11px;color:#8b7355;"></div>
+                </div>
+              </div>
+              <button onclick="clearPmcFile()"
+                style="background:none;border:none;color:#e74c3c;cursor:pointer;font-size:18px;padding:0;">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#f0f4ff;border-radius:10px;padding:14px;border-left:4px solid #667eea;margin-top:4px;">
+        <div style="font-size:12px;font-weight:700;color:#667eea;margin-bottom:4px;">ℹ️ What happens when you save:</div>
+        <div style="font-size:12px;color:#4a3728;line-height:1.7;">
+          • All visit dates will be auto-scheduled based on frequency<br>
+          • Service calls will appear in Active Calls 7 days before each visit<br>
+          • You'll get a WhatsApp alert 60 & 30 days before contract expiry
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closePmcModal()">Cancel</button>
+      <button class="btn-submit" onclick="submitPmcContract()">🔄 Save Contract & Schedule Visits</button>
+    </div>
   </div>
 </div>
 
@@ -916,25 +1123,32 @@ function submitReopen() {
 
 // ── Tab switching ─────────────────────────────────────────────
 function switchMainTab(tab) {
-  const isActive = tab === 'active';
-  const ta = document.getElementById('tabActive');
-  const tc = document.getElementById('tabCompleted');
-  if (ta) {
-    ta.style.background  = isActive ? '#b5451b' : '#fffdf9';
-    ta.style.color       = isActive ? '#fff'    : '#8b7355';
-    ta.style.borderColor = isActive ? '#b5451b' : '#e8ddd0';
-  }
-  if (tc) {
-    tc.style.background  = isActive ? '#fffdf9' : '#27ae60';
-    tc.style.color       = isActive ? '#8b7355' : '#fff';
-    tc.style.borderColor = isActive ? '#e8ddd0' : '#27ae60';
-  }
+  // Style helpers
+  const tabs = {
+    tabActive:    { el: document.getElementById('tabActive'),    active: '#b5451b', activeB: '#b5451b' },
+    tabCompleted: { el: document.getElementById('tabCompleted'), active: '#27ae60', activeB: '#27ae60' },
+    tabPmc:       { el: document.getElementById('tabPmc'),       active: '#667eea', activeB: '#667eea' }
+  };
+  Object.entries(tabs).forEach(([id, cfg]) => {
+    if (!cfg.el) return;
+    const isThis = (id === 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+    cfg.el.style.background   = isThis ? cfg.active : '#fffdf9';
+    cfg.el.style.color        = isThis ? '#fff'     : '#8b7355';
+    cfg.el.style.borderBottom = isThis ? `3px solid ${cfg.activeB}` : '3px solid transparent';
+  });
+
+  // Show/hide sections
   const fb = document.getElementById('filterBar');
   const tw = document.getElementById('tblWrap');
   const cs = document.getElementById('completedSection');
-  if (fb) fb.style.display = isActive ? '' : 'none';
-  if (tw) tw.style.display = isActive ? '' : 'none';
-  if (cs) cs.style.display = isActive ? 'none' : '';
+  const ps = document.getElementById('pmcSection');
+  if (fb) fb.style.display = tab === 'active' ? '' : 'none';
+  if (tw) tw.style.display = tab === 'active' ? '' : 'none';
+  if (cs) cs.style.display = tab === 'completed' ? '' : 'none';
+  if (ps) ps.style.display = tab === 'pmc' ? '' : 'none';
+
+  // Load PMC data when switching to that tab
+  if (tab === 'pmc' && !pmcLoaded) loadPmcContracts();
 }
 
 function renderCompleted() {
@@ -989,6 +1203,285 @@ function renderCompleted() {
 }
 
 // ── Init ───────────────────────────────────────────────────────
+// ── PMC STATE ─────────────────────────────────────────────────
+let pmcContracts = [], pmcLoaded = false;
+
+// ── PMC LOAD ──────────────────────────────────────────────────
+function loadPmcContracts() {
+  document.getElementById('pmcNoData').style.display = 'none';
+  document.getElementById('pmcBody').innerHTML =
+    '<tr><td colspan="10" style="text-align:center;padding:30px;color:#8b7355;">⏳ Loading contracts…</td></tr>';
+
+  jsonp(API + '?action=getPmcContracts', res => {
+    if (!res.success) {
+      document.getElementById('pmcBody').innerHTML =
+        '<tr><td colspan="10" style="text-align:center;padding:30px;color:#e74c3c;">❌ Error loading contracts</td></tr>';
+      return;
+    }
+    pmcContracts = res.data.contracts || [];
+    pmcLoaded = true;
+    renderPmcStats();
+    renderPmcTable();
+  });
+}
+
+function renderPmcStats() {
+  const today  = new Date(); today.setHours(0,0,0,0);
+  const in30   = new Date(today.getTime() + 30*86400000);
+  const in60   = new Date(today.getTime() + 60*86400000);
+  const active = pmcContracts.filter(c => {
+    const end = new Date(c['Contract End Date']||c.endDate||'');
+    return end >= today;
+  });
+  const expiring = active.filter(c => {
+    const end = new Date(c['Contract End Date']||c.endDate||'');
+    return end <= in60;
+  });
+  const due = active.filter(c => {
+    const nv = new Date(c['Next Visit Date']||c.nextVisit||'');
+    return nv >= today && nv <= in30;
+  });
+  const totalVal = active.reduce((s,c) => s + (parseFloat(c['Contract Value']||c.value||0)), 0);
+
+  document.getElementById('pmcStatTotal').textContent    = active.length;
+  document.getElementById('pmcStatDue').textContent      = due.length;
+  document.getElementById('pmcStatExpiring').textContent = expiring.length;
+  document.getElementById('pmcStatValue').textContent    = '₹' + totalVal.toLocaleString('en-IN');
+
+  // Update badge
+  const badge = document.getElementById('pmcCountBadge');
+  if (badge) badge.textContent = pmcContracts.length;
+}
+
+function renderPmcTable() {
+  const tbody   = document.getElementById('pmcBody');
+  const noEl    = document.getElementById('pmcNoData');
+  const search  = (document.getElementById('pmcSearch')?.value||'').toLowerCase();
+  const filter  = document.getElementById('pmcFilter')?.value || '';
+  const today   = new Date(); today.setHours(0,0,0,0);
+  const in60    = new Date(today.getTime() + 60*86400000);
+
+  let list = pmcContracts || [];
+
+  if (search) list = list.filter(c =>
+    ['Hospital Name','Equipment Model','Contract ID'].some(k => (c[k]||'').toLowerCase().includes(search))
+  );
+  if (filter === 'active')   list = list.filter(c => new Date(c['Contract End Date']||'') >= today);
+  if (filter === 'expiring') list = list.filter(c => { const e=new Date(c['Contract End Date']||''); return e>=today && e<=in60; });
+  if (filter === 'expired')  list = list.filter(c => new Date(c['Contract End Date']||'') < today);
+
+  if (!list.length) {
+    tbody.innerHTML = '';
+    noEl.style.display = 'block';
+    return;
+  }
+  noEl.style.display = 'none';
+
+  tbody.innerHTML = list.map(c => {
+    const endDate  = new Date(c['Contract End Date']||c.endDate||'');
+    const nextDate = new Date(c['Next Visit Date']||c.nextVisit||'');
+    const isExpired  = endDate < today;
+    const isExpiring = !isExpired && endDate <= in60;
+    const isDue      = !isExpired && nextDate <= new Date(today.getTime() + 7*86400000);
+
+    const statusBadge = isExpired
+      ? `<span style="background:#ffebee;color:#c62828;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Expired</span>`
+      : isExpiring
+      ? `<span style="background:#fff3e0;color:#e65100;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">⚠️ Expiring Soon</span>`
+      : `<span style="background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Active</span>`;
+
+    const nextVisitDisplay = isNaN(nextDate)
+      ? '<span style="color:#8b7355;">—</span>'
+      : isDue
+      ? `<span style="color:#e74c3c;font-weight:700;">🔔 ${(c['Next Visit Date']||c.nextVisit||'').substring(0,10)}</span>`
+      : (c['Next Visit Date']||c.nextVisit||'').substring(0,10);
+
+    return `<tr style="border-bottom:1px solid #e8ddd0;"
+               onmouseover="this.style.background='#fff8f0'" onmouseout="this.style.background=''">
+      <td style="padding:10px 14px;font-weight:700;color:#667eea;">${c['Contract ID']||'—'}</td>
+      <td style="padding:10px 14px;">
+        <div style="font-weight:600;">${c['Hospital Name']||'—'}</div>
+        <div style="font-size:11px;color:#8b7355;">${c['City']||''}</div>
+      </td>
+      <td style="padding:10px 14px;">${c['Equipment Model']||'—'}</td>
+      <td style="padding:10px 14px;">
+        <span style="background:#f0f4ff;color:#667eea;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">
+          ${c['Frequency']||'—'}
+        </span>
+      </td>
+      <td style="padding:10px 14px;">${(c['Contract Start Date']||c.startDate||'').substring(0,10)||'—'}</td>
+      <td style="padding:10px 14px;${isExpiring?'color:#e65100;font-weight:700;':isExpired?'color:#c62828;':''}">${(c['Contract End Date']||c.endDate||'').substring(0,10)||'—'}</td>
+      <td style="padding:10px 14px;">${nextVisitDisplay}</td>
+      <td style="padding:10px 14px;font-weight:600;">₹${parseFloat(c['Contract Value']||c.value||0).toLocaleString('en-IN')}</td>
+      <td style="padding:10px 14px;">${statusBadge}</td>
+      <td style="padding:10px 14px;">
+        <button onclick="renewPmcContract('${c['Contract ID']||''}')"
+          style="background:#f0f4ff;color:#667eea;border:1px solid #667eea;padding:5px 12px;
+                 border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">
+          🔄 Renew
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── PMC MODAL ─────────────────────────────────────────────────
+function openPmcModal() {
+  // Pre-fill hospitals and equipment from already-loaded formData
+  const hospSel = document.getElementById('pmcHospital');
+  const modelSel = document.getElementById('pmcModel');
+  const engSel = document.getElementById('pmcEngineer');
+  hospSel.innerHTML = '<option value="">— Select Hospital —</option>';
+  hospitalsData.forEach(h => {
+    const o = document.createElement('option'); o.value=h.name; o.textContent=h.name; hospSel.appendChild(o);
+  });
+  modelSel.innerHTML = '<option value="">— Select Equipment —</option>';
+  equipmentData.forEach(e => {
+    const o = document.createElement('option'); o.value=e.model; o.textContent=e.model; modelSel.appendChild(o);
+  });
+  engSel.innerHTML = '<option value="">— Assign later —</option>';
+  engineersData.forEach(e => {
+    const o = document.createElement('option'); o.value=e.name; o.textContent=e.name; engSel.appendChild(o);
+  });
+  // Default start = today, end = 1 year from today
+  const today = new Date().toISOString().split('T')[0];
+  const nextYear = new Date(Date.now() + 365*86400000).toISOString().split('T')[0];
+  document.getElementById('pmcStartDate').value = today;
+  document.getElementById('pmcEndDate').value   = nextYear;
+  document.getElementById('pmcFormMsg').style.display = 'none';
+  document.getElementById('ovPmc').classList.add('show');
+}
+function closePmcModal() { document.getElementById('ovPmc').classList.remove('show'); }
+
+function autoFillPmcHospital() {
+  const name = document.getElementById('pmcHospital').value;
+  const h    = hospitalsData.find(h => h.name === name);
+  if (h) {
+    document.getElementById('pmcContact').value = h.contactPerson || '';
+    document.getElementById('pmcPhone').value   = h.phone || '';
+  }
+}
+
+function submitPmcContract() {
+  const hospital  = document.getElementById('pmcHospital').value.trim();
+  const model     = document.getElementById('pmcModel').value.trim();
+  const freq      = document.getElementById('pmcFrequency').value;
+  const value     = document.getElementById('pmcValue').value;
+  const startDate = document.getElementById('pmcStartDate').value;
+  const endDate   = document.getElementById('pmcEndDate').value;
+
+  if (!hospital || !model || !freq || !value || !startDate || !endDate) {
+    const fm = document.getElementById('pmcFormMsg');
+    fm.textContent = '❌ Please fill all required fields';
+    fm.style.display = 'block'; return;
+  }
+  if (new Date(endDate) <= new Date(startDate)) {
+    const fm = document.getElementById('pmcFormMsg');
+    fm.textContent = '❌ End date must be after start date';
+    fm.style.display = 'block'; return;
+  }
+
+  const btn = document.querySelector('#ovPmc .btn-submit');
+  btn.textContent = pmcSelectedFile ? '⏳ Uploading contract & scheduling visits…' : '⏳ Saving & scheduling visits…';
+  btn.disabled = true;
+
+  // Encode file if selected, then submit
+  fileToBase64(pmcSelectedFile).then(fileData => {
+    const contractData = {
+      hospitalName:   hospital,
+      contactPerson:  document.getElementById('pmcContact').value,
+      phoneNumber:    document.getElementById('pmcPhone').value,
+      model,
+      frequency:      freq,
+      value:          parseFloat(value),
+      startDate,
+      endDate,
+      engineer:       document.getElementById('pmcEngineer').value,
+      notes:          document.getElementById('pmcNotes').value,
+      contractFile:   fileData   // base64 or null
+    };
+
+    fetch(API, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'addPmcContract', contractData })
+    }).then(() => {
+      closePmcModal();
+      clearPmcFile();
+      pmcLoaded = false;
+      loadPmcContracts();
+      msg('msgOk', '✅ PMC contract saved' + (fileData ? ', document uploaded' : '') + ' and visits scheduled!');
+      btn.textContent = '🔄 Save Contract & Schedule Visits';
+      btn.disabled = false;
+    }).catch(() => {
+      btn.textContent = '🔄 Save Contract & Schedule Visits';
+      btn.disabled = false;
+      const fm = document.getElementById('pmcFormMsg');
+      fm.textContent = '❌ Error saving. Please try again.';
+      fm.style.display = 'block';
+    });
+  });
+}
+
+function renewPmcContract(contractId) {
+  if (!confirm(`Renew contract ${contractId}? This will extend it by 1 year from today and reschedule all visits.`)) return;
+  fetch(API, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'renewPmcContract', contractId })
+  }).then(() => {
+    pmcLoaded = false;
+    loadPmcContracts();
+    msg('msgOk', `✅ Contract ${contractId} renewed for 1 year`);
+  });
+}
+
+// ── PMC FILE UPLOAD ───────────────────────────────────────────
+let pmcSelectedFile = null;
+
+function handlePmcFileSelect(input) {
+  if (input.files && input.files[0]) setPmcFile(input.files[0]);
+}
+function handlePmcFileDrop(e) {
+  e.preventDefault();
+  document.getElementById('pmcDropZone').style.borderColor = '#c9b99a';
+  document.getElementById('pmcDropZone').style.background  = '#fffdf9';
+  if (e.dataTransfer.files[0]) setPmcFile(e.dataTransfer.files[0]);
+}
+function setPmcFile(file) {
+  const maxMB = 10;
+  if (file.size > maxMB * 1024 * 1024) {
+    alert(`File too large. Max ${maxMB}MB.`); return;
+  }
+  pmcSelectedFile = file;
+  const icon = file.type === 'application/pdf' ? '📄' : '🖼️';
+  const size = (file.size / 1024) < 1024
+    ? (file.size / 1024).toFixed(1) + ' KB'
+    : (file.size / 1024 / 1024).toFixed(1) + ' MB';
+  document.getElementById('pmcFileIcon').textContent    = icon;
+  document.getElementById('pmcFileName').textContent    = file.name;
+  document.getElementById('pmcFileSize').textContent    = size;
+  document.getElementById('pmcFilePreview').style.display = 'flex';
+  document.getElementById('pmcDropZone').style.borderColor = '#667eea';
+  document.getElementById('pmcDropZone').style.background  = '#f0f4ff';
+}
+function clearPmcFile() {
+  pmcSelectedFile = null;
+  document.getElementById('pmcContractFile').value      = '';
+  document.getElementById('pmcFilePreview').style.display = 'none';
+  document.getElementById('pmcDropZone').style.borderColor = '#c9b99a';
+  document.getElementById('pmcDropZone').style.background  = '#fffdf9';
+}
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) { resolve(null); return; }
+    const reader = new FileReader();
+    reader.onload  = () => resolve({ name: file.name, type: file.type, data: reader.result.split(',')[1] });
+    reader.onerror = () => reject(new Error('File read failed'));
+    reader.readAsDataURL(file);
+  });
+}
+
 window.onload = () => { loadCalls(); loadFormData(); };
 </script>
 </body>
