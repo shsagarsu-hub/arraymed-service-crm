@@ -628,8 +628,8 @@ function submitReport() {
         }
       }, 8000);
     } else {
-      // Large files — use no-cors POST (files will upload but URL won't return)
-      fetch(API, {method:'POST', mode:'no-cors',
+      // Large files — POST (body received by Apps Script)
+      fetch(API, {method:'POST',
         headers:{'Content-Type':'application/json'},
         body: payloadStr
       }).then(() => {
