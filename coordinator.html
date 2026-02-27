@@ -2033,21 +2033,22 @@ function submitDemoRequest() {
     createdBy:      currentUser || ''
   };
 
-  // Use JSONP GET with encoded payload — same pattern as other saves in this app
-  const payload = encodeURIComponent(JSON.stringify({ action: 'addDemoRequest', demoData }));
-  jsonp(API + '?payload=' + payload, res => {
+  fetch(API, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action: 'addDemoRequest', demoData })
+  }).then(() => {
     btn.textContent = '🎯 Log Demo Request'; btn.disabled = false;
-    if (res && res.success) {
-      closeDemoModal();
-      demoLoaded = false;
-      loadDemoRequests();
-      msg('msgOk', '✅ Demo request logged successfully!');
-    } else {
-      const fm = document.getElementById('demoFormMsg');
-      fm.textContent = '❌ ' + (res && res.message ? res.message : 'Error saving. Please try again.');
-      fm.style.display = 'block';
-    }
-  }, 15000);
+    closeDemoModal();
+    demoLoaded = false;
+    loadDemoRequests();
+    msg('msgOk', '✅ Demo request logged successfully!');
+  }).catch(() => {
+    btn.textContent = '🎯 Log Demo Request'; btn.disabled = false;
+    const fm = document.getElementById('demoFormMsg');
+    fm.textContent = '❌ Network error. Please try again.';
+    fm.style.display = 'block';
+  });
 }
 
 // ── Step Update Modal ─────────────────────────────────────────────
@@ -2253,20 +2254,22 @@ function saveDemoStep() {
   const btn = document.getElementById('btnSaveStep');
   btn.textContent = '⏳ Saving…'; btn.disabled = true;
 
-  const stepPayload = encodeURIComponent(JSON.stringify({ action: 'updateDemoStep', demoId: currentDemoId, step, stepData }));
-  jsonp(API + '?payload=' + stepPayload, res => {
+  fetch(API, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action: 'updateDemoStep', demoId: currentDemoId, step, stepData })
+  }).then(() => {
     btn.textContent = '✅ Save Step'; btn.disabled = false;
-    if (res && res.success) {
-      closeDemoStepModal();
-      demoLoaded = false;
-      loadDemoRequests();
-      msg('msgOk', '✅ ' + currentDemoId + ' moved to: ' + step);
-    } else {
-      const m = document.getElementById('demoStepMsg');
-      m.textContent = '❌ ' + (res && res.message ? res.message : 'Error saving. Please try again.');
-      m.style.display = 'block';
-    }
-  }, 15000);
+    closeDemoStepModal();
+    demoLoaded = false;
+    loadDemoRequests();
+    msg('msgOk', '✅ ' + currentDemoId + ' moved to: ' + step);
+  }).catch(() => {
+    btn.textContent = '✅ Save Step'; btn.disabled = false;
+    const m = document.getElementById('demoStepMsg');
+    m.textContent = '❌ Network error. Please try again.';
+    m.style.display = 'block';
+  });
 }
 
 
