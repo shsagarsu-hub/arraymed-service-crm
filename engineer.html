@@ -214,6 +214,9 @@
     <div class="tab" id="tab-done" onclick="showTab('done')">
       ✅ Completed (<span id="doneCount">0</span>)
     </div>
+    <div class="tab" id="tab-docs" onclick="showTab('docs')">
+      📄 Documents
+    </div>
   </div>
 
   <div id="activeTab" class="tab-content active">
@@ -237,6 +240,25 @@
     </div>
   </div>
 
+  <!-- ═══ DOCUMENTS TAB ═══ -->
+  <div id="docsTab" class="tab-content">
+    <div class="container">
+      <div style="padding:16px 0;">
+        <h3 style="color:#667eea;margin:0 0 8px;">📄 Hospital Documents</h3>
+        <p style="color:#8b7355;font-size:13px;margin:0 0 16px;">View documents for your active service calls — PAN, GST, PO &amp; Invoice.</p>
+        <select id="docCallSelect" onchange="loadHospitalDocs()" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;font-size:14px;margin-bottom:16px;">
+          <option value="">— Select a service call —</option>
+        </select>
+        <div id="docsContent">
+          <div style="text-align:center;padding:40px;color:#aaa;">
+            <div style="font-size:40px;">📂</div>
+            <p>Select a service call above</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="bot-nav">
     <button class="nav-btn active" id="nav-active" onclick="showTab('active')">
       <span class="nav-icon">🔥</span>Active
@@ -249,6 +271,9 @@
     </button>
     <button class="nav-btn" id="nav-done" onclick="showTab('done')">
       <span class="nav-icon">✅</span>Done
+    </button>
+    <button class="nav-btn" id="nav-docs" onclick="showTab('docs')">
+      <span class="nav-icon">📄</span>Docs
     </button>
   </div>
 </div>
@@ -480,12 +505,14 @@ function renderDone() {
 
 // ── Tabs ───────────────────────────────────────────────────────
 function showTab(tab) {
-  ['active','waiting','done'].forEach(t => {
+  ['active','waiting','done','docs'].forEach(t => {
     document.getElementById(t+'Tab').classList.toggle('active', t===tab);
-    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    const tabBtn = document.getElementById('tab-'+t);
+    if (tabBtn) tabBtn.classList.toggle('active', t===tab);
     const nb = document.getElementById('nav-'+t);
     if (nb) nb.classList.toggle('active', t===tab);
   });
+  if (tab === 'docs') populateDocCallSelect();
 }
 
 // ── Navigate ───────────────────────────────────────────────────
@@ -620,6 +647,67 @@ function submitReport() {
 }
 
 // ── Init ───────────────────────────────────────────────────────
+
+// ══════════════════════════════════════════════════════════════
+// DOCUMENTS TAB
+// ══════════════════════════════════════════════════════════════
+function populateDocCallSelect() {
+  const sel = document.getElementById('docCallSelect');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Select a service call —</option>';
+  (activeCalls || []).concat(waitingCalls || []).forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c['Hospital Name'] || '';
+    opt.textContent = (c['Call ID'] || '') + ' – ' + (c['Hospital Name'] || '') + ' – ' + (c['Equipment Model'] || '');
+    sel.appendChild(opt);
+  });
+  if (prev) sel.value = prev;
+}
+
+function loadHospitalDocs() {
+  const hospital = document.getElementById('docCallSelect').value;
+  const content  = document.getElementById('docsContent');
+  if (!hospital) {
+    content.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa;"><div style="font-size:40px;">📂</div><p>Select a service call above</p></div>';
+    return;
+  }
+  content.innerHTML = '<div style="text-align:center;padding:30px;color:#888;">⏳ Loading documents…</div>';
+
+  jsonp(API + '?action=getHospitalDocs&hospital=' + encodeURIComponent(hospital), res => {
+    if (!res.success || !res.data) {
+      content.innerHTML = '<div style="text-align:center;padding:30px;color:#e53935;">❌ Could not load documents. Please try again.</div>';
+      return;
+    }
+    const docs = res.data;
+    const hasAny = docs.pan || docs.gst || docs.po || docs.invoice || (docs.others && docs.others.length);
+    if (!hasAny) {
+      content.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa;"><div style="font-size:40px;">📭</div><p>No documents uploaded yet for this hospital.</p><p style="font-size:12px;">Ask your coordinator to upload PAN, GST, PO & Invoice.</p></div>';
+      return;
+    }
+    const docCard = (icon, label, url) => url
+      ? `<a href="${url}" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border:1px solid #e0e0e0;border-radius:10px;text-decoration:none;color:#2c2116;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+          <span style="font-size:28px;">${icon}</span>
+          <div>
+            <div style="font-weight:700;font-size:14px;">${label}</div>
+            <div style="font-size:11px;color:#1976d2;">Tap to open / download</div>
+          </div>
+          <span style="margin-left:auto;font-size:18px;">→</span>
+        </a>` : '';
+
+    let html = `<div style="margin-bottom:12px;">
+      <div style="font-weight:800;font-size:15px;color:#2c2116;">📁 ${hospital}</div>
+      <div style="font-size:12px;color:#8b7355;">Documents uploaded by coordinator</div>
+    </div>`;
+    html += docCard('🪪', 'PAN Copy', docs.pan);
+    html += docCard('📜', 'GST Certificate', docs.gst);
+    html += docCard('📋', 'Customer Purchase Order (PO)', docs.po);
+    html += docCard('🧾', 'Invoice', docs.invoice);
+    if (docs.others) {
+      docs.others.forEach((o, i) => { html += docCard('📎', o.label || 'Attachment ' + (i+1), o.url); });
+    }
+    content.innerHTML = html;
+  });
+}
 window.onload = () => {
   loadEngList();
   engineer = localStorage.getItem('arraymed_engineer');
