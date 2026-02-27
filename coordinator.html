@@ -2290,8 +2290,10 @@ function saveNewHospital() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
-  api('addHospital', {
-    hospitalData: {
+  fetch(API, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action: 'addHospital', hospitalData: {
       name,
       contactPerson: document.getElementById('ahContact').value.trim(),
       phone:         document.getElementById('ahPhone').value.trim(),
@@ -2299,24 +2301,18 @@ function saveNewHospital() {
       city:          document.getElementById('ahCity').value.trim(),
       state:         document.getElementById('ahState').value.trim(),
       address:       document.getElementById('ahAddress').value.trim()
-    }
-  }, res => {
+    }})
+  }).then(() => {
     btn.disabled = false; btn.textContent = '💾 Save Hospital';
-    if (res.success) {
-      showAddHospMsg('✅ Hospital added successfully!', false);
-      // Add to local data and rebuild dropdown
-      hospitalsData.push({ name, city: document.getElementById('ahCity').value.trim() });
-      buildHospitalSel();
-      // Auto-select the new hospital
-      const sel = document.getElementById('hospitalName');
-      sel.value = name;
-      setTimeout(() => {
-        closeAddHospitalModal();
-        autoFillHospital();
-      }, 1200);
-    } else {
-      showAddHospMsg('❌ ' + (res.message || 'Failed to save.'), true);
-    }
+    showAddHospMsg('✅ Hospital added!', false);
+    hospitalsData.push({ name, city: document.getElementById('ahCity').value.trim() });
+    buildHospitalSel();
+    const sel = document.getElementById('hospitalName');
+    sel.value = name;
+    setTimeout(() => { closeAddHospitalModal(); autoFillHospital(); }, 1200);
+  }).catch(() => {
+    btn.disabled = false; btn.textContent = '💾 Save Hospital';
+    showAddHospMsg('❌ Network error. Please try again.', true);
   });
 }
 function showAddHospMsg(txt, isErr) {
@@ -2346,27 +2342,25 @@ function saveNewEquipment() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
-  api('addEquipment', {
-    equipmentData: {
+  fetch(API, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action: 'addEquipment', equipmentData: {
       model, category,
       brand:    document.getElementById('aeBrand').value.trim(),
       warranty: document.getElementById('aeWarranty').value.trim(),
       notes:    document.getElementById('aeNotes').value.trim()
-    }
-  }, res => {
+    }})
+  }).then(() => {
     btn.disabled = false; btn.textContent = '💾 Save Product';
-    if (res.success) {
-      showAddEquipMsg('✅ Product added successfully!', false);
-      equipmentData.push({ model, category });
-      buildEquipSel();
-      const sel = document.getElementById('model');
-      sel.value = model;
-      setTimeout(() => {
-        closeAddEquipModal();
-      }, 1200);
-    } else {
-      showAddEquipMsg('❌ ' + (res.message || 'Failed to save.'), true);
-    }
+    showAddEquipMsg('✅ Product added!', false);
+    equipmentData.push({ model, category });
+    buildEquipSel();
+    document.getElementById('model').value = model;
+    setTimeout(() => { closeAddEquipModal(); }, 1200);
+  }).catch(() => {
+    btn.disabled = false; btn.textContent = '💾 Save Product';
+    showAddEquipMsg('❌ Network error. Please try again.', true);
   });
 }
 function showAddEquipMsg(txt, isErr) {
@@ -2417,19 +2411,17 @@ function confirmTransfer() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = '⏳ Transferring…';
 
-  api('transferCall', {
-    callId: transferCallId,
-    newEngineer: engineer,
-    reason,
-    note
-  }, res => {
+  fetch(API, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action: 'transferCall', callId: transferCallId, newEngineer: engineer, reason, note })
+  }).then(() => {
     btn.disabled = false; btn.textContent = '🔄 Confirm Transfer';
-    if (res.success) {
-      showTransferMsg('✅ Call transferred & engineers notified!', false);
-      setTimeout(() => { closeTransferModal(); loadCalls(); }, 1500);
-    } else {
-      showTransferMsg('❌ ' + (res.message || 'Transfer failed.'), true);
-    }
+    showTransferMsg('✅ Call transferred! Both engineers will be notified by email.', false);
+    setTimeout(() => { closeTransferModal(); loadCalls(); }, 1800);
+  }).catch(() => {
+    btn.disabled = false; btn.textContent = '🔄 Confirm Transfer';
+    showTransferMsg('❌ Network error. Please try again.', true);
   });
 }
 function showTransferMsg(txt, isErr) {
@@ -2534,25 +2526,22 @@ function saveHospitalDocs() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
-  api('saveHospitalDocs', {
-    hospitalName: hospital,
-    docs: {
+  fetch(API, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action: 'saveHospitalDocs', hospitalName: hospital, docs: {
       pan:     document.getElementById('udPan').value.trim(),
       gst:     document.getElementById('udGst').value.trim(),
       po:      document.getElementById('udPo').value.trim(),
       invoice: document.getElementById('udInvoice').value.trim()
-    }
-  }, res => {
+    }})
+  }).then(() => {
     btn.disabled = false; btn.textContent = '💾 Save Documents';
-    if (res.success) {
-      showUploadDocMsg('✅ Documents saved!', false);
-      setTimeout(() => {
-        closeUploadDocModal();
-        loadDocsByHospital();
-      }, 1200);
-    } else {
-      showUploadDocMsg('❌ ' + (res.message || 'Failed to save.'), true);
-    }
+    showUploadDocMsg('✅ Documents saved!', false);
+    setTimeout(() => { closeUploadDocModal(); loadDocsByHospital(); }, 1200);
+  }).catch(() => {
+    btn.disabled = false; btn.textContent = '💾 Save Documents';
+    showUploadDocMsg('❌ Network error. Please try again.', true);
   });
 }
 
