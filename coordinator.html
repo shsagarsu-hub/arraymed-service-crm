@@ -1298,16 +1298,14 @@ function submitNewCall() {
     assignedEngineer: document.getElementById('assignedEngineer').value,
     estDuration:      document.getElementById('estDuration').value||''
   };
-  fetch(API, {method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'logServiceCall',callData})
-  }).then(() => {
+  postViaGet('logServiceCall', {callData}, () => {
     btn.disabled=false; btn.innerHTML='✅ Submit Service Call';
     closeNew();
     msg('msgOk', `✅ Service call logged for ${callData.hospitalName}! Engineer ${callData.assignedEngineer} notified.`);
     setTimeout(loadCalls, 1500);
-  }).catch(() => {
+  }, err => {
     btn.disabled=false; btn.innerHTML='✅ Submit Service Call';
-    document.getElementById('fmsg').textContent='❌ Submission failed. Please try again.';
+    document.getElementById('fmsg').textContent='❌ ' + err;
     document.getElementById('fmsg').style.display='block';
   });
 }
@@ -1321,9 +1319,7 @@ function openStatus(callId, hospital) {
 function closeStatus() { document.getElementById('ovStatus').classList.remove('show'); }
 function setStatus(newStatus) {
   const callId = document.getElementById('statusCallId').value;
-  fetch(API, {method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'updateCallStatus',callId,status:newStatus})
-  }).then(() => {
+  postViaGet('updateCallStatus', {callId, status: newStatus}, () => {
     closeStatus();
     msg('msgOk', `✅ ${callId} updated to "${newStatus}"`);
     setTimeout(loadCalls, 1200);
@@ -1376,9 +1372,7 @@ function showRemarkBox() {
 }
 function acceptCall() {
   const callId = document.getElementById('reviewCallId').value;
-  fetch(API, {method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'updateCallStatus',callId,status:'Completed'})
-  }).then(() => {
+  postViaGet('updateCallStatus', {callId, status: 'Completed'}, () => {
     closeReview();
     msg('msgOk', `✅ ${callId} accepted and marked as Completed.`);
     setTimeout(loadCalls, 1200);
@@ -1391,9 +1385,7 @@ function submitReopen() {
     document.getElementById('reviewMsg').textContent = '⚠️ Please enter a remark for the engineer.';
     document.getElementById('reviewMsg').style.display = 'block'; return;
   }
-  fetch(API, {method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'reopenCall',callId,remark,status:'Reopened'})
-  }).then(() => {
+  postViaGet('reopenCall', {callId, remark, status: 'Reopened'}, () => {
     closeReview();
     msg('msgOk', `🔄 ${callId} sent back to engineer with your remark.`);
     setTimeout(loadCalls, 1200);
@@ -1693,43 +1685,30 @@ function submitPmcContract() {
       contractFile:   fileData   // base64 or null
     };
 
-    fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'addPmcContract', contractData })
-    }).then(() => {
-      closePmcModal();
+    postViaGet('addPmcContract', {contractData}, () => {
+    closePmcModal();
       clearPmcFile();
       pmcLoaded = false;
       loadPmcContracts();
       msg('msgOk', '✅ PMC contract saved' + (fileData ? ', document uploaded' : '') + ' and visits scheduled!');
       btn.textContent = '🔄 Save Contract & Schedule Visits';
       btn.disabled = false;
-    }).catch(() => {
-      btn.textContent = '🔄 Save Contract & Schedule Visits';
+  }, err => {
+    btn.textContent = '🔄 Save Contract & Schedule Visits';
       btn.disabled = false;
       const fm = document.getElementById('pmcFormMsg');
       fm.textContent = '❌ Error saving. Please try again.';
       fm.style.display = 'block';
-    });
   });
 }
 
 function renewPmcContract(contractId) {
   if (!confirm(`Renew contract ${contractId}? This will extend it by 1 year from today and reschedule all visits.`)) return;
-  fetch(API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'renewPmcContract', contractId })
-  }).then(() => {
+  postViaGet('renewPmcContract', {contractId}, () => {
     pmcLoaded = false;
     loadPmcContracts();
     msg('msgOk', `✅ Contract ${contractId} renewed for 1 year`);
   });
-}
-
-// ── PMC FILE UPLOAD ───────────────────────────────────────────
-let pmcSelectedFile = null;
 
 function handlePmcFileSelect(input) {
   if (input.files && input.files[0]) setPmcFile(input.files[0]);
@@ -2033,26 +2012,18 @@ function submitDemoRequest() {
     createdBy:      currentUser || ''
   };
 
-  fetch(API, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ action: 'addDemoRequest', demoData })
-  }).then(() => {
+  postViaGet('addDemoRequest', {demoData}, () => {
     btn.textContent = '🎯 Log Demo Request'; btn.disabled = false;
     closeDemoModal();
     demoLoaded = false;
     loadDemoRequests();
     msg('msgOk', '✅ Demo request logged successfully!');
-  }).catch(() => {
+  }, err => {
     btn.textContent = '🎯 Log Demo Request'; btn.disabled = false;
     const fm = document.getElementById('demoFormMsg');
     fm.textContent = '❌ Network error. Please try again.';
     fm.style.display = 'block';
   });
-}
-
-// ── Step Update Modal ─────────────────────────────────────────────
-let currentDemoId = null;
 
 function openDemoStepModal(demoId) {
   const demo = demoRequests.find(d => d.demoId === demoId);
@@ -2254,32 +2225,18 @@ function saveDemoStep() {
   const btn = document.getElementById('btnSaveStep');
   btn.textContent = '⏳ Saving…'; btn.disabled = true;
 
-  fetch(API, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ action: 'updateDemoStep', demoId: currentDemoId, step, stepData })
-  }).then(() => {
+  postViaGet('updateDemoStep', {demoId: currentDemoId, step, stepData}, () => {
     btn.textContent = '✅ Save Step'; btn.disabled = false;
     closeDemoStepModal();
     demoLoaded = false;
     loadDemoRequests();
     msg('msgOk', '✅ ' + currentDemoId + ' moved to: ' + step);
-  }).catch(() => {
+  }, err => {
     btn.textContent = '✅ Save Step'; btn.disabled = false;
     const m = document.getElementById('demoStepMsg');
     m.textContent = '❌ Network error. Please try again.';
     m.style.display = 'block';
-  });
-}
-
-
-
-// ══════════════════════════════════════════════════════════════════
-// ADD HOSPITAL
-// ══════════════════════════════════════════════════════════════════
-function openAddHospitalModal() {
-  ['ahName','ahContact','ahPhone','ahEmail','ahCity','ahState','ahAddress']
-    .forEach(id => { document.getElementById(id).value = ''; });
+  }); });
   document.getElementById('addHospMsg').style.display = 'none';
   document.getElementById('ovAddHospital').style.display = 'flex';
 }
@@ -2293,10 +2250,7 @@ function saveNewHospital() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
-  fetch(API, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ action: 'addHospital', hospitalData: {
+  postViaGet('addHospital', {hospitalData: {
       name,
       contactPerson: document.getElementById('ahContact').value.trim(),
       phone:         document.getElementById('ahPhone').value.trim(),
@@ -2304,8 +2258,7 @@ function saveNewHospital() {
       city:          document.getElementById('ahCity').value.trim(),
       state:         document.getElementById('ahState').value.trim(),
       address:       document.getElementById('ahAddress').value.trim()
-    }})
-  }).then(() => {
+    }}, () => {
     btn.disabled = false; btn.textContent = '💾 Save Hospital';
     showAddHospMsg('✅ Hospital added!', false);
     hospitalsData.push({ name, city: document.getElementById('ahCity').value.trim() });
@@ -2313,13 +2266,10 @@ function saveNewHospital() {
     const sel = document.getElementById('hospitalName');
     sel.value = name;
     setTimeout(() => { closeAddHospitalModal(); autoFillHospital(); }, 1200);
-  }).catch(() => {
+  }, err => {
     btn.disabled = false; btn.textContent = '💾 Save Hospital';
     showAddHospMsg('❌ Network error. Please try again.', true);
   });
-}
-function showAddHospMsg(txt, isErr) {
-  const el = document.getElementById('addHospMsg');
   el.textContent = txt;
   el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
   el.style.display = 'block';
@@ -2345,29 +2295,22 @@ function saveNewEquipment() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
-  fetch(API, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ action: 'addEquipment', equipmentData: {
+  postViaGet('addEquipment', {equipmentData: {
       model, category,
       brand:    document.getElementById('aeBrand').value.trim(),
       warranty: document.getElementById('aeWarranty').value.trim(),
       notes:    document.getElementById('aeNotes').value.trim()
-    }})
-  }).then(() => {
+    }}, () => {
     btn.disabled = false; btn.textContent = '💾 Save Product';
     showAddEquipMsg('✅ Product added!', false);
     equipmentData.push({ model, category });
     buildEquipSel();
     document.getElementById('model').value = model;
     setTimeout(() => { closeAddEquipModal(); }, 1200);
-  }).catch(() => {
+  }, err => {
     btn.disabled = false; btn.textContent = '💾 Save Product';
     showAddEquipMsg('❌ Network error. Please try again.', true);
   });
-}
-function showAddEquipMsg(txt, isErr) {
-  const el = document.getElementById('addEquipMsg');
   el.textContent = txt;
   el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
   el.style.display = 'block';
@@ -2414,21 +2357,14 @@ function confirmTransfer() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = '⏳ Transferring…';
 
-  fetch(API, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ action: 'transferCall', callId: transferCallId, newEngineer: engineer, reason, note })
-  }).then(() => {
+  postViaGet('transferCall', {callId: transferCallId, newEngineer: engineer, reason, note}, () => {
     btn.disabled = false; btn.textContent = '🔄 Confirm Transfer';
     showTransferMsg('✅ Call transferred! Both engineers will be notified by email.', false);
     setTimeout(() => { closeTransferModal(); loadCalls(); }, 1800);
-  }).catch(() => {
+  }, err => {
     btn.disabled = false; btn.textContent = '🔄 Confirm Transfer';
     showTransferMsg('❌ Network error. Please try again.', true);
   });
-}
-function showTransferMsg(txt, isErr) {
-  const el = document.getElementById('transferMsg');
   el.textContent = txt;
   el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
   el.style.display = 'block';
@@ -2529,32 +2465,40 @@ function saveHospitalDocs() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
-  fetch(API, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ action: 'saveHospitalDocs', hospitalName: hospital, docs: {
+  postViaGet('saveHospitalDocs', {hospitalName: hospital, docs: {
       pan:     document.getElementById('udPan').value.trim(),
       gst:     document.getElementById('udGst').value.trim(),
       po:      document.getElementById('udPo').value.trim(),
       invoice: document.getElementById('udInvoice').value.trim()
-    }})
-  }).then(() => {
+    }}, () => {
     btn.disabled = false; btn.textContent = '💾 Save Documents';
     showUploadDocMsg('✅ Documents saved!', false);
     setTimeout(() => { closeUploadDocModal(); loadDocsByHospital(); }, 1200);
-  }).catch(() => {
+  }, err => {
     btn.disabled = false; btn.textContent = '💾 Save Documents';
     showUploadDocMsg('❌ Network error. Please try again.', true);
   });
-}
-
-function showUploadDocMsg(txt, isErr) {
-  const el = document.getElementById('uploadDocMsg');
   el.textContent = txt;
   el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
   el.style.display = 'block';
 }
 
+
+// ══════════════════════════════════════════════════════════════
+// postViaGet — sends data to Apps Script via JSONP GET
+// Apps Script doGet handles ?payload= encoded JSON
+// This avoids CORS preflight issues with POST + JSON content-type
+// ══════════════════════════════════════════════════════════════
+function postViaGet(action, data, onSuccess, onError) {
+  const payload = encodeURIComponent(JSON.stringify(Object.assign({ action }, data)));
+  jsonp(API + '?payload=' + payload, res => {
+    if (res && res.success) {
+      if (onSuccess) onSuccess(res);
+    } else {
+      if (onError) onError(res && res.message ? res.message : 'Unknown error');
+    }
+  }, 20000);
+}
 window.onload = () => { loadCalls(); loadFormData(); };
 </script>
 
