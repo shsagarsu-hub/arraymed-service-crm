@@ -1298,7 +1298,7 @@ function submitNewCall() {
     assignedEngineer: document.getElementById('assignedEngineer').value,
     estDuration:      document.getElementById('estDuration').value||''
   };
-  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+  fetch(API, {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({action:'logServiceCall',callData})
   }).then(() => {
     btn.disabled=false; btn.innerHTML='✅ Submit Service Call';
@@ -1321,7 +1321,7 @@ function openStatus(callId, hospital) {
 function closeStatus() { document.getElementById('ovStatus').classList.remove('show'); }
 function setStatus(newStatus) {
   const callId = document.getElementById('statusCallId').value;
-  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+  fetch(API, {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({action:'updateCallStatus',callId,status:newStatus})
   }).then(() => {
     closeStatus();
@@ -1376,7 +1376,7 @@ function showRemarkBox() {
 }
 function acceptCall() {
   const callId = document.getElementById('reviewCallId').value;
-  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+  fetch(API, {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({action:'updateCallStatus',callId,status:'Completed'})
   }).then(() => {
     closeReview();
@@ -1391,7 +1391,7 @@ function submitReopen() {
     document.getElementById('reviewMsg').textContent = '⚠️ Please enter a remark for the engineer.';
     document.getElementById('reviewMsg').style.display = 'block'; return;
   }
-  fetch(API, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+  fetch(API, {method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({action:'reopenCall',callId,remark,status:'Reopened'})
   }).then(() => {
     closeReview();
@@ -1694,7 +1694,7 @@ function submitPmcContract() {
     };
 
     fetch(API, {
-      method: 'POST', mode: 'no-cors',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'addPmcContract', contractData })
     }).then(() => {
@@ -1718,7 +1718,7 @@ function submitPmcContract() {
 function renewPmcContract(contractId) {
   if (!confirm(`Renew contract ${contractId}? This will extend it by 1 year from today and reschedule all visits.`)) return;
   fetch(API, {
-    method: 'POST', mode: 'no-cors',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'renewPmcContract', contractId })
   }).then(() => {
@@ -2034,7 +2034,7 @@ function submitDemoRequest() {
   };
 
   fetch(API, {
-    method: 'POST', mode: 'no-cors',
+    method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ action: 'addDemoRequest', demoData })
   }).then(() => {
@@ -2255,7 +2255,7 @@ function saveDemoStep() {
   btn.textContent = '⏳ Saving…'; btn.disabled = true;
 
   fetch(API, {
-    method: 'POST', mode: 'no-cors',
+    method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ action: 'updateDemoStep', demoId: currentDemoId, step, stepData })
   }).then(() => {
@@ -2294,7 +2294,7 @@ function saveNewHospital() {
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
   fetch(API, {
-    method: 'POST', mode: 'no-cors',
+    method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ action: 'addHospital', hospitalData: {
       name,
@@ -2346,7 +2346,7 @@ function saveNewEquipment() {
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
   fetch(API, {
-    method: 'POST', mode: 'no-cors',
+    method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ action: 'addEquipment', equipmentData: {
       model, category,
@@ -2415,7 +2415,7 @@ function confirmTransfer() {
   btn.disabled = true; btn.textContent = '⏳ Transferring…';
 
   fetch(API, {
-    method: 'POST', mode: 'no-cors',
+    method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ action: 'transferCall', callId: transferCallId, newEngineer: engineer, reason, note })
   }).then(() => {
@@ -2530,7 +2530,7 @@ function saveHospitalDocs() {
   btn.disabled = true; btn.textContent = '⏳ Saving…';
 
   fetch(API, {
-    method: 'POST', mode: 'no-cors',
+    method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ action: 'saveHospitalDocs', hospitalName: hospital, docs: {
       pan:     document.getElementById('udPan').value.trim(),
