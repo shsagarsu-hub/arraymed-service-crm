@@ -257,6 +257,12 @@
         🎯 Demo Requests <span id="demoCountBadge"
           style="background:#e8ddd0;color:#8b7355;padding:2px 8px;border-radius:20px;margin-left:6px;font-size:11px;">—</span>
       </button>
+      <button id="tabDocs" onclick="switchMainTab('docs')"
+        style="padding:14px 28px;border:none;border-bottom:3px solid transparent;
+               background:#fffdf9;color:#8b7355;font-weight:800;font-size:13px;cursor:pointer;
+               font-family:inherit;transition:all .2s;">
+        📄 Documents
+      </button>
     </div>
 
     <!-- ACTIVE SECTION -->
@@ -491,6 +497,33 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- DOCUMENTS SECTION                                              -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="docsSection" style="display:none;padding:20px;">
+  <div class="card-hdr" style="margin-bottom:16px;">
+    <h2>📄 Hospital Documents</h2>
+    <p style="font-size:13px;color:#8b7355;margin:4px 0 0;">Upload PAN, GST, Customer PO &amp; Invoice per hospital. Engineers can view these from their portal.</p>
+  </div>
+
+  <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+    <select id="docHospitalSel" onchange="loadDocsByHospital()" style="flex:1;min-width:220px;padding:10px;border-radius:8px;border:1px solid #ddd;font-size:14px;">
+      <option value="">— Select Hospital —</option>
+    </select>
+    <button onclick="openUploadDocModal()" style="background:linear-gradient(135deg,#1976d2,#1565c0);color:#fff;border:none;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;font-size:13px;">
+      📤 Upload Documents
+    </button>
+  </div>
+
+  <div id="docsList">
+    <div style="text-align:center;padding:40px;color:#aaa;">
+      <div style="font-size:48px;">📂</div>
+      <p>Select a hospital above to view and manage documents.</p>
+    </div>
+  </div>
+</div>
+
+
 <!-- ADD PMC CONTRACT MODAL -->
 <div class="ov" id="ovPmc">
   <div class="modal" style="max-width:680px;">
@@ -630,9 +663,11 @@
         <div class="fsec-title">🏥 Hospital Information</div>
         <div class="fgrid one">
           <div class="fg">
-            <label>Hospital Name <span class="req">*</span></label>
+            <label>Hospital Name <span class="req">*</span>
+              <button type="button" onclick="openAddHospitalModal()" style="margin-left:8px;background:#e8f5e9;border:1px solid #4caf50;color:#2e7d32;border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;vertical-align:middle;">➕ Add New</button>
+            </label>
             <select id="hospitalName" onchange="autoFillHospital()" required>
-              <option value="">— Loading from Sales CRM… —</option>
+              <option value="">— Select Hospital —</option>
             </select>
             <span class="note" id="hospNote"></span>
           </div>
@@ -661,7 +696,9 @@
         <div class="fsec-title">🔧 Equipment Details</div>
         <div class="fgrid three">
           <div class="fg">
-            <label>Equipment Model <span class="req">*</span></label>
+            <label>Equipment Model <span class="req">*</span>
+              <button type="button" onclick="openAddEquipModal()" style="margin-left:8px;background:#e3f2fd;border:1px solid #1976d2;color:#1565c0;border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;vertical-align:middle;">➕ Add New</button>
+            </label>
             <select id="model" onchange="autoFillEquipment()" required>
               <option value="">— Select Equipment —</option>
             </select>
@@ -1113,6 +1150,12 @@ function renderTable(calls) {
                📋 Review Report
              </button>`
           : `<button class="btn-upd" onclick="openStatus('${esc(c['Call ID'])}','${esc(c['Hospital Name'])}')">✏️ Update</button>`
+        }
+        ${['Assigned','Scheduled','In Progress'].includes(c.Status||'')
+          ? `<button class="btn-upd" style="background:linear-gradient(135deg,#f59e0b,#d97706);margin-top:4px;width:100%;"
+               onclick="openTransferModal('${esc(c['Call ID'])}','${esc(c['Hospital Name'])}','${esc(c['Equipment Model'])}','${esc(c['Assigned Engineer']||'')}')">
+               🔄 Transfer</button>`
+          : ''
         }
       </td>
     </tr>`).join('');
@@ -2227,7 +2270,497 @@ function saveDemoStep() {
 }
 
 
+
+// ══════════════════════════════════════════════════════════════════
+// ADD HOSPITAL
+// ══════════════════════════════════════════════════════════════════
+function openAddHospitalModal() {
+  ['ahName','ahContact','ahPhone','ahEmail','ahCity','ahState','ahAddress']
+    .forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('addHospMsg').style.display = 'none';
+  document.getElementById('ovAddHospital').style.display = 'flex';
+}
+function closeAddHospitalModal() {
+  document.getElementById('ovAddHospital').style.display = 'none';
+}
+function saveNewHospital() {
+  const name = document.getElementById('ahName').value.trim();
+  if (!name) { showAddHospMsg('❌ Hospital name is required.', true); return; }
+
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ Saving…';
+
+  api('addHospital', {
+    hospitalData: {
+      name,
+      contactPerson: document.getElementById('ahContact').value.trim(),
+      phone:         document.getElementById('ahPhone').value.trim(),
+      email:         document.getElementById('ahEmail').value.trim(),
+      city:          document.getElementById('ahCity').value.trim(),
+      state:         document.getElementById('ahState').value.trim(),
+      address:       document.getElementById('ahAddress').value.trim()
+    }
+  }, res => {
+    btn.disabled = false; btn.textContent = '💾 Save Hospital';
+    if (res.success) {
+      showAddHospMsg('✅ Hospital added successfully!', false);
+      // Add to local data and rebuild dropdown
+      hospitalsData.push({ name, city: document.getElementById('ahCity').value.trim() });
+      buildHospitalSel();
+      // Auto-select the new hospital
+      const sel = document.getElementById('hospitalName');
+      sel.value = name;
+      setTimeout(() => {
+        closeAddHospitalModal();
+        autoFillHospital();
+      }, 1200);
+    } else {
+      showAddHospMsg('❌ ' + (res.message || 'Failed to save.'), true);
+    }
+  });
+}
+function showAddHospMsg(txt, isErr) {
+  const el = document.getElementById('addHospMsg');
+  el.textContent = txt;
+  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
+  el.style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ADD EQUIPMENT / PRODUCT
+// ══════════════════════════════════════════════════════════════════
+function openAddEquipModal() {
+  ['aeModel','aeCategory','aeBrand','aeWarranty','aeNotes']
+    .forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('addEquipMsg').style.display = 'none';
+  document.getElementById('ovAddEquip').style.display = 'flex';
+}
+function closeAddEquipModal() {
+  document.getElementById('ovAddEquip').style.display = 'none';
+}
+function saveNewEquipment() {
+  const model = document.getElementById('aeModel').value.trim();
+  const category = document.getElementById('aeCategory').value.trim();
+  if (!model) { showAddEquipMsg('❌ Product/model name is required.', true); return; }
+
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ Saving…';
+
+  api('addEquipment', {
+    equipmentData: {
+      model, category,
+      brand:    document.getElementById('aeBrand').value.trim(),
+      warranty: document.getElementById('aeWarranty').value.trim(),
+      notes:    document.getElementById('aeNotes').value.trim()
+    }
+  }, res => {
+    btn.disabled = false; btn.textContent = '💾 Save Product';
+    if (res.success) {
+      showAddEquipMsg('✅ Product added successfully!', false);
+      equipmentData.push({ model, category });
+      buildEquipSel();
+      const sel = document.getElementById('model');
+      sel.value = model;
+      setTimeout(() => {
+        closeAddEquipModal();
+      }, 1200);
+    } else {
+      showAddEquipMsg('❌ ' + (res.message || 'Failed to save.'), true);
+    }
+  });
+}
+function showAddEquipMsg(txt, isErr) {
+  const el = document.getElementById('addEquipMsg');
+  el.textContent = txt;
+  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
+  el.style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TRANSFER CALL
+// ══════════════════════════════════════════════════════════════════
+let transferCallId = null;
+function openTransferModal(callId, hospital, equipment, currentEngineer) {
+  transferCallId = callId;
+  document.getElementById('transferMsg').style.display = 'none';
+  document.getElementById('transferNote').value = '';
+  document.getElementById('transferReason').value = '';
+  document.getElementById('transferCallInfo').innerHTML =
+    `<strong>📞 ${callId}</strong> &nbsp;|&nbsp; 🏥 ${hospital} &nbsp;|&nbsp; 🔧 ${equipment}<br>` +
+    `<span style="color:#e65100;">Current Engineer: <strong>${currentEngineer || 'Unassigned'}</strong></span>`;
+
+  // Build engineer dropdown - exclude current
+  const sel = document.getElementById('transferEngineer');
+  sel.innerHTML = '<option value="">— Select Engineer —</option>';
+  engineersData
+    .filter(e => e.name !== currentEngineer)
+    .forEach(e => {
+      const o = document.createElement('option');
+      o.value = e.name;
+      o.textContent = e.name + (e.specialisation ? ' – ' + e.specialisation : '');
+      sel.appendChild(o);
+    });
+
+  document.getElementById('ovTransfer').style.display = 'flex';
+}
+function closeTransferModal() {
+  document.getElementById('ovTransfer').style.display = 'none';
+  transferCallId = null;
+}
+function confirmTransfer() {
+  const engineer = document.getElementById('transferEngineer').value;
+  const reason   = document.getElementById('transferReason').value;
+  const note     = document.getElementById('transferNote').value.trim();
+  if (!engineer) { showTransferMsg('❌ Please select an engineer.', true); return; }
+  if (!reason)   { showTransferMsg('❌ Please select a reason.', true); return; }
+
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ Transferring…';
+
+  api('transferCall', {
+    callId: transferCallId,
+    newEngineer: engineer,
+    reason,
+    note
+  }, res => {
+    btn.disabled = false; btn.textContent = '🔄 Confirm Transfer';
+    if (res.success) {
+      showTransferMsg('✅ Call transferred & engineers notified!', false);
+      setTimeout(() => { closeTransferModal(); loadCalls(); }, 1500);
+    } else {
+      showTransferMsg('❌ ' + (res.message || 'Transfer failed.'), true);
+    }
+  });
+}
+function showTransferMsg(txt, isErr) {
+  const el = document.getElementById('transferMsg');
+  el.textContent = txt;
+  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
+  el.style.display = 'block';
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// DOCUMENTS MANAGEMENT (COORDINATOR)
+// ══════════════════════════════════════════════════════════════════
+function loadDocsHospitalList() {
+  const sel = document.getElementById('docHospitalSel');
+  sel.innerHTML = '<option value="">— Select Hospital —</option>';
+  (hospitalsData || []).forEach(h => {
+    const opt = document.createElement('option');
+    opt.value = h.name;
+    opt.textContent = h.name + (h.city ? ' (' + h.city + ')' : '');
+    sel.appendChild(opt);
+  });
+}
+
+function loadDocsByHospital() {
+  const hospital = document.getElementById('docHospitalSel').value;
+  const list = document.getElementById('docsList');
+  if (!hospital) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa;"><div style="font-size:48px;">📂</div><p>Select a hospital above.</p></div>';
+    return;
+  }
+  list.innerHTML = '<div style="text-align:center;padding:30px;color:#888;">⏳ Loading…</div>';
+  jsonp(API + '?action=getHospitalDocs&hospital=' + encodeURIComponent(hospital), res => {
+    if (!res.success) {
+      list.innerHTML = '<div style="color:#e53935;padding:20px;">❌ Could not load documents.</div>';
+      return;
+    }
+    const d = res.data || {};
+    const row = (icon, label, url) => `
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #f0f0f0;">
+        <span style="font-size:24px;">${icon}</span>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:13px;">${label}</div>
+          ${url
+            ? `<a href="${url}" target="_blank" style="font-size:12px;color:#1976d2;">🔗 View Document</a>`
+            : `<span style="font-size:12px;color:#aaa;">Not uploaded</span>`}
+        </div>
+        <button onclick="openUploadDocModal('${hospital.replace(/'/g,"\'")}')"
+          style="background:${url?'#f5f5f5':'#e3f2fd'};border:1px solid ${url?'#ddd':'#90caf9'};
+                 color:${url?'#666':'#1565c0'};border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;">
+          ${url ? '✏️ Update' : '📤 Upload'}
+        </button>
+      </div>`;
+
+    list.innerHTML = `
+      <div style="background:#fff;border-radius:12px;border:1px solid #e0e0e0;overflow:hidden;">
+        <div style="background:#e3f2fd;padding:12px 16px;font-weight:800;color:#1565c0;">📁 ${hospital}</div>
+        ${row('🪪', 'PAN Copy', d.pan)}
+        ${row('📜', 'GST Certificate', d.gst)}
+        ${row('📋', 'Customer PO', d.po)}
+        ${row('🧾', 'Invoice', d.invoice)}
+      </div>`;
+  });
+}
+
+function openUploadDocModal(hospital) {
+  document.getElementById('uploadDocMsg').style.display = 'none';
+  // Populate hospital select
+  const sel = document.getElementById('udHospital');
+  sel.innerHTML = '<option value="">— Select Hospital —</option>';
+  (hospitalsData || []).forEach(h => {
+    const opt = document.createElement('option');
+    opt.value = h.name;
+    opt.textContent = h.name;
+    sel.appendChild(opt);
+  });
+  if (hospital) sel.value = hospital;
+
+  // Pre-fill with existing docs
+  ['udPan','udGst','udPo','udInvoice'].forEach(id => document.getElementById(id).value = '');
+  if (hospital) {
+    jsonp(API + '?action=getHospitalDocs&hospital=' + encodeURIComponent(hospital), res => {
+      if (res.success && res.data) {
+        if (res.data.pan)     document.getElementById('udPan').value     = res.data.pan;
+        if (res.data.gst)     document.getElementById('udGst').value     = res.data.gst;
+        if (res.data.po)      document.getElementById('udPo').value      = res.data.po;
+        if (res.data.invoice) document.getElementById('udInvoice').value = res.data.invoice;
+      }
+    });
+  }
+  document.getElementById('ovUploadDoc').style.display = 'flex';
+}
+
+function closeUploadDocModal() {
+  document.getElementById('ovUploadDoc').style.display = 'none';
+}
+
+function saveHospitalDocs() {
+  const hospital = document.getElementById('udHospital').value;
+  if (!hospital) { showUploadDocMsg('❌ Please select a hospital.', true); return; }
+
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ Saving…';
+
+  api('saveHospitalDocs', {
+    hospitalName: hospital,
+    docs: {
+      pan:     document.getElementById('udPan').value.trim(),
+      gst:     document.getElementById('udGst').value.trim(),
+      po:      document.getElementById('udPo').value.trim(),
+      invoice: document.getElementById('udInvoice').value.trim()
+    }
+  }, res => {
+    btn.disabled = false; btn.textContent = '💾 Save Documents';
+    if (res.success) {
+      showUploadDocMsg('✅ Documents saved!', false);
+      setTimeout(() => {
+        closeUploadDocModal();
+        loadDocsByHospital();
+      }, 1200);
+    } else {
+      showUploadDocMsg('❌ ' + (res.message || 'Failed to save.'), true);
+    }
+  });
+}
+
+function showUploadDocMsg(txt, isErr) {
+  const el = document.getElementById('uploadDocMsg');
+  el.textContent = txt;
+  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
+  el.style.display = 'block';
+}
+
 window.onload = () => { loadCalls(); loadFormData(); };
 </script>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- ADD HOSPITAL MODAL                                             -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="ov" id="ovAddHospital" style="display:none;">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-hdr" style="background:linear-gradient(135deg,#27ae60,#219a52);">
+      <h2>🏥 Add New Hospital</h2>
+      <button class="modal-close" onclick="closeAddHospitalModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="addHospMsg" class="msg msg-err" style="display:none;"></div>
+      <div class="fgrid">
+        <div class="fg">
+          <label>Hospital Name <span class="req">*</span></label>
+          <input type="text" id="ahName" placeholder="Full hospital name" required>
+        </div>
+        <div class="fg">
+          <label>Contact Person</label>
+          <input type="text" id="ahContact" placeholder="Primary contact name">
+        </div>
+        <div class="fg">
+          <label>Phone</label>
+          <input type="tel" id="ahPhone" placeholder="10-digit mobile" maxlength="10">
+        </div>
+        <div class="fg">
+          <label>Email</label>
+          <input type="email" id="ahEmail" placeholder="hospital@email.com">
+        </div>
+        <div class="fg">
+          <label>City</label>
+          <input type="text" id="ahCity" placeholder="City">
+        </div>
+        <div class="fg">
+          <label>State</label>
+          <input type="text" id="ahState" placeholder="State">
+        </div>
+      </div>
+      <div class="fgrid one" style="margin-top:12px;">
+        <div class="fg">
+          <label>Address</label>
+          <textarea id="ahAddress" placeholder="Full address (optional)" style="height:60px;resize:vertical;"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeAddHospitalModal()">Cancel</button>
+      <button class="btn-submit" onclick="saveNewHospital()">💾 Save Hospital</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- ADD EQUIPMENT / PRODUCT MODAL                                  -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="ov" id="ovAddEquip" style="display:none;">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-hdr" style="background:linear-gradient(135deg,#1976d2,#1565c0);">
+      <h2>🔧 Add New Product / Equipment</h2>
+      <button class="modal-close" onclick="closeAddEquipModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="addEquipMsg" class="msg msg-err" style="display:none;"></div>
+      <div class="fgrid">
+        <div class="fg">
+          <label>Product / Model Name <span class="req">*</span></label>
+          <input type="text" id="aeModel" placeholder="e.g. Mindray BC-5300" required>
+        </div>
+        <div class="fg">
+          <label>Category <span class="req">*</span></label>
+          <input type="text" id="aeCategory" placeholder="e.g. Haematology Analyser">
+        </div>
+        <div class="fg">
+          <label>Brand / Make</label>
+          <input type="text" id="aeBrand" placeholder="e.g. Mindray, Sysmex">
+        </div>
+        <div class="fg">
+          <label>Warranty Period (months)</label>
+          <input type="number" id="aeWarranty" placeholder="e.g. 12" min="0">
+        </div>
+      </div>
+      <div class="fgrid one" style="margin-top:12px;">
+        <div class="fg">
+          <label>Notes / Specifications</label>
+          <textarea id="aeNotes" placeholder="Any special notes about this product…" style="height:60px;resize:vertical;"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeAddEquipModal()">Cancel</button>
+      <button class="btn-submit" onclick="saveNewEquipment()">💾 Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TRANSFER CALL MODAL                                            -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="ov" id="ovTransfer" style="display:none;">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-hdr" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+      <h2>🔄 Transfer Call to Another Engineer</h2>
+      <button class="modal-close" onclick="closeTransferModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="transferMsg" class="msg msg-err" style="display:none;"></div>
+      <div id="transferCallInfo" style="background:#fff8e1;border:1px solid #ffd54f;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;"></div>
+      <div class="fgrid one">
+        <div class="fg">
+          <label>Transfer To Engineer <span class="req">*</span></label>
+          <select id="transferEngineer">
+            <option value="">— Select Engineer —</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgrid one" style="margin-top:12px;">
+        <div class="fg">
+          <label>Reason for Transfer <span class="req">*</span></label>
+          <select id="transferReason">
+            <option value="">— Select Reason —</option>
+            <option value="Engineer Unavailable">Engineer Unavailable</option>
+            <option value="Out of City">Out of City</option>
+            <option value="On Leave">On Leave</option>
+            <option value="Skill Mismatch">Skill Mismatch – Different Expertise Needed</option>
+            <option value="Overloaded">Engineer Overloaded / Too Many Active Calls</option>
+            <option value="Requested by Hospital">Requested by Hospital</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgrid one" style="margin-top:12px;" id="transferOtherWrap" style="display:none;">
+        <div class="fg">
+          <label>Additional Note</label>
+          <textarea id="transferNote" placeholder="Optional: add any extra context…" style="height:60px;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div style="background:#e3f2fd;border:1px solid #90caf9;border-radius:8px;padding:10px;margin-top:12px;font-size:12px;color:#1565c0;">
+        📧 Both the <strong>current engineer</strong> and the <strong>new engineer</strong> will be notified by email.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeTransferModal()">Cancel</button>
+      <button class="btn-submit" onclick="confirmTransfer()">🔄 Confirm Transfer</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- UPLOAD DOCUMENTS MODAL                                         -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="ov" id="ovUploadDoc" style="display:none;">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-hdr" style="background:linear-gradient(135deg,#1976d2,#1565c0);">
+      <h2>📤 Upload Hospital Documents</h2>
+      <button class="modal-close" onclick="closeUploadDocModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="uploadDocMsg" class="msg msg-err" style="display:none;"></div>
+      <div class="fgrid one" style="margin-bottom:12px;">
+        <div class="fg">
+          <label>Hospital <span class="req">*</span></label>
+          <select id="udHospital" required>
+            <option value="">— Select Hospital —</option>
+          </select>
+        </div>
+      </div>
+      <div style="background:#f5f5f5;border-radius:10px;padding:16px;">
+        <p style="font-size:12px;color:#666;margin:0 0 12px;">Paste Google Drive / SharePoint links for each document. Engineers will see a direct link to open/download.</p>
+        <div class="fgrid one">
+          <div class="fg">
+            <label>🪪 PAN Copy (URL)</label>
+            <input type="url" id="udPan" placeholder="https://drive.google.com/file/...">
+          </div>
+          <div class="fg" style="margin-top:10px;">
+            <label>📜 GST Certificate (URL)</label>
+            <input type="url" id="udGst" placeholder="https://drive.google.com/file/...">
+          </div>
+          <div class="fg" style="margin-top:10px;">
+            <label>📋 Customer Purchase Order / PO (URL)</label>
+            <input type="url" id="udPo" placeholder="https://drive.google.com/file/...">
+          </div>
+          <div class="fg" style="margin-top:10px;">
+            <label>🧾 Invoice (URL)</label>
+            <input type="url" id="udInvoice" placeholder="https://drive.google.com/file/...">
+          </div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:#888;margin-top:10px;">💡 Tip: In Google Drive, right-click the file → Share → Copy link. Set access to "Anyone with link".</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeUploadDocModal()">Cancel</button>
+      <button class="btn-submit" onclick="saveHospitalDocs()">💾 Save Documents</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
