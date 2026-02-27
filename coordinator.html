@@ -2270,9 +2270,10 @@ function saveNewHospital() {
     btn.disabled = false; btn.textContent = '💾 Save Hospital';
     showAddHospMsg('❌ Network error. Please try again.', true);
   });
-  el.textContent = txt;
-  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
-  el.style.display = 'block';
+}
+function showAddHospMsg(txt, isErr) {
+  const el = document.getElementById('addHospMsg');
+  el.textContent = txt; el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok'); el.style.display = 'block';
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -2311,9 +2312,10 @@ function saveNewEquipment() {
     btn.disabled = false; btn.textContent = '💾 Save Product';
     showAddEquipMsg('❌ Network error. Please try again.', true);
   });
-  el.textContent = txt;
-  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
-  el.style.display = 'block';
+}
+function showAddEquipMsg(txt, isErr) {
+  const el = document.getElementById('addEquipMsg');
+  el.textContent = txt; el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok'); el.style.display = 'block';
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -2365,11 +2367,11 @@ function confirmTransfer() {
     btn.disabled = false; btn.textContent = '🔄 Confirm Transfer';
     showTransferMsg('❌ Network error. Please try again.', true);
   });
-  el.textContent = txt;
-  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
-  el.style.display = 'block';
 }
-
+function showTransferMsg(txt, isErr) {
+  const el = document.getElementById('transferMsg');
+  el.textContent = txt; el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok'); el.style.display = 'block';
+}
 
 // ══════════════════════════════════════════════════════════════════
 // DOCUMENTS MANAGEMENT (COORDINATOR)
@@ -2478,11 +2480,11 @@ function saveHospitalDocs() {
     btn.disabled = false; btn.textContent = '💾 Save Documents';
     showUploadDocMsg('❌ Network error. Please try again.', true);
   });
-  el.textContent = txt;
-  el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok');
-  el.style.display = 'block';
 }
-
+function showUploadDocMsg(txt, isErr) {
+  const el = document.getElementById('uploadDocMsg');
+  el.textContent = txt; el.className = 'msg ' + (isErr ? 'msg-err' : 'msg-ok'); el.style.display = 'block';
+}
 
 // ══════════════════════════════════════════════════════════════
 // postViaGet — sends data to Apps Script via JSONP GET
